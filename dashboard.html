@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Steady Steps</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <h1 class="app-title">Steady Steps</h1>
+    </header>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-section">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h2 class="view-title">Dashboard</h2>
+            </div>
+            <div class="header-right">
+                <button id="add-goal-btn" class="btn primary">+ Add Goal</button>
+            </div>
+        </header>
+        <nav class="filters">
+            <button class="btn filter active" data-filter="all">All Goals</button>
+            <button class="btn filter" data-filter="in-progress">In Progress</button>
+            <button class="btn filter" data-filter="completed">Completed</button>
+        </nav>
+        <main id="goal-list" class="goal-list">
+            <!-- Goals will be dynamically injected here -->
+        </main>
+
+        <!-- Modal for Adding/Editing Goals -->
+        <div id="goal-modal" class="modal hidden">
+            <div class="modal-content">
+                <h2 id="modal-title">Add Goal</h2>
+                <form id="goal-form">
+                    <label for="goal-title">Goal Title</label>
+                    <input type="text" id="goal-title" placeholder="Enter your goal" required />
+
+                    <label for="goal-progress">Progress (%)</label>
+                    <input type="number" id="goal-progress" min="0" max="100" value="0" required />
+
+                    <label for="goal-status">Status</label>
+                    <select id="goal-status">
+                        <option value="in-progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                    </select>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn primary">Save Goal</button>
+                        <button type="button" id="cancel-goal" class="btn secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="scripts/dashboard.js"></script>
+</body>
+</html>
