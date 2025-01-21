@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
+  <link rel="stylesheet" href="styles/styles.css">
   <script src="scripts/dashboard.js" defer></script>
 </head>
 <body>
-  <h1>Task Dashboard</h1>
-  <form id="task-form">
-    <label for="task-title">Task:</label>
-    <input type="text" id="task-title" required />
-    <button type="submit">Add Task</button>
-  </form>
-  <ul id="task-list"></ul>
+  <div class="container">
+    <h1>Task Dashboard</h1>
+    <form id="task-form">
+      <label for="task-title">Add New Task:</label>
+      <input type="text" id="task-title" required />
+      <button type="submit">Add Task</button>
+    </form>
+    <ul id="task-list"></ul>
+  </div>
 </body>
 </html>
