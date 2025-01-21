@@ -7,13 +7,13 @@
 // }
 
 //const API_BASE_URL = "http://localhost:5001/api"; // Update with Render URL after deployment
-const API_BASE_URL = "https://steadysteps-goaltracker.onrender.com"; // Update with Render URL after deployment
+const API_BASE_URL = "https://steadysteps-goaltracker.onrender.com/api"; // Update with Render URL after deployment
 
 // Helper function to send POST requests
 async function postData(url, data) {
   console.log("Sending data to:", url);
   console.log("Request body:", data);
-  
+
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

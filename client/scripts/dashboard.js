@@ -119,7 +119,7 @@
 // document.addEventListener('DOMContentLoaded', renderGoals);
 
 //const API_BASE_URL = "http://localhost:5001/api"; // Update with Render URL after deployment
-const API_BASE_URL = "https://steadysteps-goaltracker.onrender.com"; // Update with Render URL after deployment
+const API_BASE_URL = "https://steadysteps-goaltracker.onrender.com/api"; // Update with Render URL after deployment
 
 const token = localStorage.getItem("jwtToken");
 
