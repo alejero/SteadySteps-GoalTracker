@@ -72,3 +72,23 @@ document
   .getElementById("register-form")
   ?.addEventListener("submit", registerUser);
 document.getElementById("login-form")?.addEventListener("submit", loginUser);
+
+
+const darkModeToggle = document.getElementById("dark-mode-toggle");
+const toggleIcon = document.getElementById("toggle-icon");
+
+// Check localStorage for saved theme
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme) {
+  document.body.classList.toggle("dark-mode", savedTheme === "dark");
+  toggleIcon.classList = savedTheme === "dark" ? "fas fa-sun" : "fas fa-moon";
+}
+
+// Toggle dark mode
+darkModeToggle.addEventListener("click", () => {
+  const isDarkMode = document.body.classList.toggle("dark-mode");
+  toggleIcon.classList = isDarkMode ? "fas fa-sun" : "fas fa-moon";
+
+  // Save the user's preference
+  localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+});
