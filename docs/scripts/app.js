@@ -73,11 +73,46 @@ document
   ?.addEventListener("submit", registerUser);
 document.getElementById("login-form")?.addEventListener("submit", loginUser);
 
+// Providing immediate feedback to the user during registration
+const registerButton = document.querySelector("#register-form button");
+
+registerButton.disabled = true; // Disable button
+registerButton.textContent = "Registering..."; // Show loading text
+
+try {
+  const response = await fetch("https://your-backend-url/auth/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name,
+      username,
+      email,
+      password,
+    }),
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    alert(data.message); // Success feedback
+    window.location.href = "login.html";
+  } else {
+    const error = await response.json();
+    alert(`Error: ${error.error}`);
+  }
+} catch (error) {
+  alert("An unexpected error occurred. Please try again.");
+} finally {
+  registerButton.disabled = false; // Re-enable button
+  registerButton.textContent = "Register"; // Reset button text
+}
+
 // Redirect to Dashboard after Successful Registration
 document
   .getElementById("register-form")
   .addEventListener("submit", async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent form from submitting the default way and the query string
 
     const name = document.getElementById("name").value;
     const username = document.getElementById("username").value;
@@ -87,25 +122,34 @@ document
     try {
       const response = await fetch(`${API_BASE_URL}/auth/register`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, username, email, password }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          username,
+          email,
+          password,
+        }),
       });
 
       if (response.ok) {
-        alert("Registration successful! Redirecting to login...");
-        window.location.href = "login.html";
+        const data = await response.json();
+        alert(data.message); // Display success message
+        window.location.href = "login.html"; // Redirect to login page
       } else {
-        const { message } = await response.json();
-        alert(`Error: ${message}`);
+        const error = await response.json();
+        alert(`Error: ${error.error}`); // Show specific error from the server
       }
     } catch (error) {
-      alert("An error occurred. Please try again.");
+      alert("An unexpected error occurred. Please try again later."); // Generic error message
+      console.error(error);
     }
   });
 
 // Redirect to Dashboard after Successful Login
 document.getElementById("login-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
+  e.preventDefault(); // Prevent form from submitting the default way and the query string
 
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
