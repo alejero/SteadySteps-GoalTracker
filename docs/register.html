@@ -13,29 +13,35 @@
   <body>
     <div class="container">
       <h1>Create Your Account</h1>
-      <form id="register-form">
-        <label for="register-username">Username:</label>
+      <form id="register-form" class="auth-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Enter your name" required />
+
+        <label for="username">Username</label>
         <input
           type="text"
-          id="register-username"
+          id="username"
           placeholder="Choose a username"
           required
         />
-        <label for="register-email">Email:</label>
+
+        <label for="email">Email</label>
         <input
           type="email"
-          id="register-email"
+          id="email"
           placeholder="Enter your email"
           required
         />
-        <label for="register-password">Password:</label>
+
+        <label for="password">Password</label>
         <input
           type="password"
-          id="register-password"
+          id="password"
           placeholder="Create a password"
           required
         />
-        <button type="submit">Register</button>
+
+        <button type="submit" class="button-primary">Register</button>
       </form>
     </div>
     <button class="dark-mode-toggle" id="dark-mode-toggle">

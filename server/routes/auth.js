@@ -5,13 +5,13 @@ const router = express.Router();
 
 // Register a new user
 router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, username, email, password } = req.body;
 
   // Basic validation
-  if (!username || !email || !password) {
+  if (!name || !username || !email || !password) {
     return res
       .status(400)
-      .json({ error: "Please provide all required fields." });
+      .json({ error: "Please provide all required fields: name, username, email, and password." });
   }
 
   // Check email format (basic regex)
@@ -21,31 +21,60 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    const user = new User({ username, email, password });
+    // Check if username already exists
+    const usernameExists = await User.findOne({ username });
+    if (usernameExists) {
+      return res.status(400).json({ error: "Username already exists. Please choose another one." });
+    }
+
+    // Check if email already exists
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ error: "Email already in use. Please log in or use another email." });
+    }
+
+    // Create and save the new user
+    const user = new User({ name, username, email, password });
     await user.save();
+
     res.status(201).json({ message: "User registered successfully!" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
 
 // Login user
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
+
+  // Basic validation
+  if (!username || !password) {
+    return res.status(400).json({ error: "Please provide both username and password." });
+  }
+
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: "User not found!" });
+    // Find user by username
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ error: "User not found. Please register first." });
+    }
 
-    const isMatch = await user.matchPassword(password);
-    if (!isMatch)
-      return res.status(400).json({ error: "Invalid credentials!" });
+    // Check if password matches
+    const isMatch = await user.matchPassword(password); // Assuming User schema has a `matchPassword` method
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid credentials. Please try again." });
+    }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+    // Generate a token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+    res.status(200).json({
+      message: "Login successful!",
+      token,
+      user: { id: user._id, name: user.name, username: user.username },
     });
-    res.status(200).json({ token, username: user.username });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
 

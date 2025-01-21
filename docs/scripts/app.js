@@ -72,3 +72,62 @@ document
   .getElementById("register-form")
   ?.addEventListener("submit", registerUser);
 document.getElementById("login-form")?.addEventListener("submit", loginUser);
+
+// Redirect to Dashboard after Successful Registration
+document
+  .getElementById("register-form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, username, email, password }),
+      });
+
+      if (response.ok) {
+        alert("Registration successful! Redirecting to login...");
+        window.location.href = "login.html";
+      } else {
+        const { message } = await response.json();
+        alert(`Error: ${message}`);
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  });
+
+// Redirect to Dashboard after Successful Login
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (response.ok) {
+      const { user } = await response.json();
+      alert(`Welcome, ${user.name}! Redirecting to your dashboard...`);
+      window.location.href = `dashboard.html?name=${encodeURIComponent(
+        user.name
+      )}`;
+    } else {
+      const { message } = await response.json();
+      alert(`Error: ${message}`);
+    }
+  } catch (error) {
+    alert("An error occurred. Please try again.");
+  }
+});
