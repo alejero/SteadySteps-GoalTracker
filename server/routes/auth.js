@@ -54,19 +54,25 @@ router.post("/register", async (req, res) => {
 
 // Login user
 router.post("/login", async (req, res) => {
-  const { login, password } = req.body; // "login" can be either email or username
-
+  const { login, password } = req.body; // Expecting "login" (email or username) and "password"
+  
   try {
+    // Find user by email or username
     const user = await User.findOne({
-      $or: [{ email: login }, { username: login }], // Match email or username
+      $or: [{ email: login }, { username: login }],
     });
 
-    if (!user) return res.status(404).json({ error: "User not found!" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found!" });
+    }
 
+    // Compare provided password with stored hash
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(400).json({ error: "Invalid credentials!" });
+    }
 
+    // Generate JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
@@ -77,6 +83,7 @@ router.post("/login", async (req, res) => {
       user: { id: user._id, name: user.name, username: user.username },
     });
   } catch (error) {
+    console.error("Login error:", error); // Log error for debugging
     res.status(500).json({ error: "Server error. Please try again later." });
   }
 });
