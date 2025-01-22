@@ -108,6 +108,24 @@ h2 {
   background-color: var(--primary-hover-color);
 }
 
+.message {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.message.success {
+  color: #fff;
+  background-color: #28a745;
+}
+
+.message.error {
+  color: #fff;
+  background-color: #dc3545;
+}
+
 /* Dark mode toggle button */
 .dark-mode-toggle {
   position: fixed;

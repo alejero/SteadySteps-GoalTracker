@@ -10,19 +10,12 @@
     />
     <link rel="stylesheet" href="styles/styles.css" />
     <script src="scripts/app.js" defer></script>
+    <script src="scripts/darkmode.js" defer></script>
     <script src="scripts/dashboard.js" defer></script>
   </head>
   <body>
     <div class="container">
       <h1 id="welcome-message"></h1>
-      <script>
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get("name");
-        document.getElementById(
-          "welcome-message"
-        ).textContent = `Welcome, ${name}!`;
-      </script>
-      <h1>Task Dashboard</h1>
       <form id="task-form">
         <label for="task-title">Add New Task:</label>
         <input type="text" id="task-title" required />

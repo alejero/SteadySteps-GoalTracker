@@ -54,31 +54,48 @@ async function registerUser(event) {
 
 // Login a user
 async function loginUser(event) {
-  event.preventDefault(); // Prevent default form submission behavior
+  event.preventDefault();
   console.log("Login form submitted");
 
-  const loginField = document.getElementById("login-field")?.value; // Can be email or username
-  const password = document.getElementById("login-password")?.value;
+  const loginField = document.getElementById("login-field").value; // Can be email or username
+  const password = document.getElementById("login-password").value;
 
   if (!loginField || !password) {
-    alert("Please fill in all fields.");
+    displayMessage("Please fill in all fields.", "error");
     return;
   }
 
   try {
-    const { token, user } = await postData(`${API_BASE_URL}/auth/login`, {
-      login: loginField, // Supports either email or username
-      password,
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ login: loginField, password }),
     });
 
-    localStorage.setItem("jwtToken", token); // Store the token in localStorage
-    alert(`Welcome, ${user.name}! Redirecting to your dashboard...`);
-    window.location.href = `dashboard.html?name=${encodeURIComponent(
-      user.name
-    )}`; // Redirect to dashboard
+    if (response.ok) {
+      const { token, user } = await response.json();
+      localStorage.setItem("jwtToken", token); // Store token for future API requests
+      localStorage.setItem("userName", user.name); // Save user's name for display
+      window.location.href = `dashboard.html?name=${encodeURIComponent(user.name)}`; // Redirect to dashboard
+    } else {
+      const error = await response.json();
+      displayMessage(`Error: ${error.error || "Login failed"}`, "error");
+    }
   } catch (error) {
-    alert(error.message);
+    console.error("Unexpected error:", error);
+    displayMessage("An unexpected error occurred. Please try again later.", "error");
   }
+}
+
+// Helper function to display messages dynamically
+function displayMessage(message, type) {
+  const messageContainer = document.getElementById("message-container");
+  if (!messageContainer) return;
+
+  messageContainer.textContent = message;
+  messageContainer.className = `message ${type}`; // Use CSS classes for styling
 }
 
 // Attach event listener for register form

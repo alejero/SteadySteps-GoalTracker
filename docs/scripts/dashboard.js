@@ -24,37 +24,62 @@ async function fetchWithAuth(url, options = {}) {
 // Fetch and display tasks
 async function fetchTasks() {
   try {
-    const tasks = await fetchWithAuth(`${API_BASE_URL}/tasks`);
-    const taskList = document.getElementById("task-list");
-    taskList.innerHTML = ""; // Clear the list
-
-    tasks.forEach((task) => {
-      const li = document.createElement("li");
-      li.textContent = task.title;
-      taskList.appendChild(li);
+    const token = localStorage.getItem("jwtToken");
+    const response = await fetch(`${API_BASE_URL}/tasks`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
+
+    if (response.ok) {
+      const tasks = await response.json();
+      renderTasks(tasks);
+    } else {
+      console.error("Failed to fetch tasks:", response.status);
+    }
   } catch (error) {
-    alert(error.message);
+    console.error("Error fetching tasks:", error);
   }
 }
 
+function renderTasks(tasks) {
+  const taskContainer = document.getElementById("task-container");
+  taskContainer.innerHTML = ""; // Clear existing tasks
+
+  tasks.forEach((task) => {
+    const taskElement = document.createElement("div");
+    taskElement.className = "task";
+    taskElement.textContent = task.title; // Adjust based on your task model
+    taskContainer.appendChild(taskElement);
+  });
+}
+
 // Create a new task
-async function createTask(event) {
+async function addTask(event) {
   event.preventDefault();
+
   const title = document.getElementById("task-title").value;
+  const token = localStorage.getItem("jwtToken");
 
   try {
-    await fetchWithAuth(`${API_BASE_URL}/tasks`, {
+    const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ title }),
     });
-    document.getElementById("task-title").value = ""; // Clear input
-    fetchTasks(); // Refresh task list
+
+    if (response.ok) {
+      fetchTasks(); // Refetch tasks to update the dashboard
+    } else {
+      const error = await response.json();
+      console.error("Error adding task:", error);
+    }
   } catch (error) {
-    alert(error.message);
+    console.error("Error adding task:", error);
   }
 }
 
 // Event listeners
-document.getElementById("task-form")?.addEventListener("submit", createTask);
-document.addEventListener("DOMContentLoaded", fetchTasks);
+document.getElementById("task-form")?.addEventListener("submit", addTask); // Attach event listener to task form
+document.addEventListener("DOMContentLoaded", fetchTasks); // Fetch tasks on page load
