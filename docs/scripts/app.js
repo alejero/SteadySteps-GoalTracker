@@ -70,7 +70,13 @@ async function loginUser(event) {
 }
 
 // Attach event listener for register form
-document.getElementById("register-form")?.addEventListener("submit", registerUser);
+document.getElementById("register-form")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  console.log("Register form submitted");
+});
 
 // Attach event listener for login form
-document.getElementById("login-form")?.addEventListener("submit", loginUser);
+document.getElementById("login-form")?.addEventListener("submit", async (e) => {
+  e.preventDefault(); // Prevent default form submission behavior
+  console.log("Login form submitted");
+});
