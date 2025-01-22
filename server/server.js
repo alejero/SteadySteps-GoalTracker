@@ -8,8 +8,16 @@ const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 
 const app = express();
-app.use(cors());
+
+// Middleware
 app.use(bodyParser.json());
+
+// CORS setup
+app.use(cors({
+    origin: "https://alejero.github.io/SteadySteps-GoalTracker/", // Replace with your GitHub Pages URL
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  }));
 
 // Routes
 app.use('/api/auth', authRoutes);
