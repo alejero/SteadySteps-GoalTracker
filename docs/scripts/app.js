@@ -24,12 +24,18 @@ async function postData(url, data) {
 
 // Register a user
 async function registerUser(event) {
-  event.preventDefault();
+  event.preventDefault(); // Prevent default form submission behavior
+  console.log("Register form submitted");
 
-  const name = document.getElementById("register-name").value;
-  const username = document.getElementById("register-username").value;
-  const email = document.getElementById("register-email").value;
-  const password = document.getElementById("register-password").value;
+  const name = document.getElementById("register-name")?.value;
+  const username = document.getElementById("register-username")?.value;
+  const email = document.getElementById("register-email")?.value;
+  const password = document.getElementById("register-password")?.value;
+
+  if (!name || !username || !email || !password) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
   try {
     const result = await postData(`${API_BASE_URL}/auth/register`, {
@@ -40,7 +46,7 @@ async function registerUser(event) {
     });
 
     alert("Registration successful! Please log in.");
-    window.location.href = "login.html";
+    window.location.href = "login.html"; // Redirect to login page
   } catch (error) {
     alert(error.message);
   }
@@ -48,35 +54,41 @@ async function registerUser(event) {
 
 // Login a user
 async function loginUser(event) {
-  event.preventDefault();
+  event.preventDefault(); // Prevent default form submission behavior
+  console.log("Login form submitted");
 
-  const loginField = document.getElementById("login-field").value; // Can be email or username
-  const password = document.getElementById("login-password").value;
+  const loginField = document.getElementById("login-field")?.value; // Can be email or username
+  const password = document.getElementById("login-password")?.value;
+
+  if (!loginField || !password) {
+    alert("Please fill in all fields.");
+    return;
+  }
 
   try {
     const { token, user } = await postData(`${API_BASE_URL}/auth/login`, {
-      login: loginField, // Adjust backend to accept "login" for either email or username
+      login: loginField, // Supports either email or username
       password,
     });
 
     localStorage.setItem("jwtToken", token); // Store the token in localStorage
-    alert(`Welcome, ${user.name}!`);
+    alert(`Welcome, ${user.name}! Redirecting to your dashboard...`);
     window.location.href = `dashboard.html?name=${encodeURIComponent(
       user.name
-    )}`;
+    )}`; // Redirect to dashboard
   } catch (error) {
     alert(error.message);
   }
 }
 
 // Attach event listener for register form
-document.getElementById("register-form")?.addEventListener("submit", (e) => {
-  e.preventDefault();
-  console.log("Register form submitted");
-});
+const registerForm = document.getElementById("register-form");
+if (registerForm) {
+  registerForm.addEventListener("submit", registerUser);
+}
 
 // Attach event listener for login form
-document.getElementById("login-form")?.addEventListener("submit", async (e) => {
-  e.preventDefault(); // Prevent default form submission behavior
-  console.log("Login form submitted");
-});
+const loginForm = document.getElementById("login-form");
+if (loginForm) {
+  loginForm.addEventListener("submit", loginUser);
+}
