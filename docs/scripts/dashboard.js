@@ -1,9 +1,13 @@
-import { API_BASE_URL } from "./config.js"; // Import the shared constant
+import { API_BASE_URL } from "./config.js";
 
-const token = localStorage.getItem("jwtToken");
-
-// Helper function to send requests with authorization
+// Helper function for authenticated fetch requests
 async function fetchWithAuth(url, options = {}) {
+  const token = localStorage.getItem("jwtToken");
+  if (!token) {
+    console.error("No token found in localStorage.");
+    throw new Error("Unauthorized: No token available.");
+  }
+
   options.headers = {
     ...options.headers,
     "Content-Type": "application/json",
@@ -20,70 +24,44 @@ async function fetchWithAuth(url, options = {}) {
   return response.json();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Display welcome message
-  const userName = localStorage.getItem("userName"); // Retrieve user's name from localStorage
-  const headerTitle = document.getElementById("dashboard-header"); // Dashboard header/title element
-
-  if (headerTitle) {
-    if (userName) {
-      headerTitle.textContent = `Welcome, ${userName}!`; // Display the user's name
-    } else {
-      headerTitle.textContent = "Welcome!"; // Fallback message
-      console.warn("User name not found in localStorage.");
-    }
+// Render tasks in the task container
+function renderTasks(tasks) {
+  const taskContainer = document.getElementById("task-container");
+  if (!taskContainer) {
+    console.error("Task container not found!");
+    return;
   }
 
-  // Fetch and display tasks
-  async function fetchTasks() {
-    showLoading("Fetching tasks...");
-  
-    try {
-      const token = localStorage.getItem("jwtToken");
-      const response = await fetch(`${API_BASE_URL}/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-  
-      if (response.ok) {
-        const tasks = await response.json();
-        renderTasks(tasks); // Render tasks dynamically
-      } else {
-        console.error("Failed to fetch tasks:", response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
-    } finally {
-      hideLoading();
-    }
+  taskContainer.innerHTML = ""; // Clear existing tasks
+
+  if (tasks.length === 0) {
+    taskContainer.innerHTML = "<p>No tasks yet. Add some to get started!</p>";
+    return;
   }
 
-  function renderTasks(tasks) {
-    const taskContainer = document.getElementById("task-container");
-    if (!taskContainer) {
-      console.error("Task container not found!");
-      return;
-    }
+  tasks.forEach((task) => {
+    const taskElement = document.createElement("div");
+    taskElement.className = "task"; // Add styling class if needed
+    taskElement.textContent = task.title; // Adjust to match your Task model
+    taskContainer.appendChild(taskElement);
+  });
+}
 
-    taskContainer.innerHTML = ""; // Clear existing tasks
-
-    if (tasks.length === 0) {
-      // Display a message if no tasks are available
-      taskContainer.innerHTML = "<p>No tasks yet. Add some to get started!</p>";
-      return;
-    }
-
-    tasks.forEach((task) => {
-      const taskElement = document.createElement("div");
-      taskElement.className = "task"; // Add styling class if needed
-      taskElement.textContent = task.title; // Replace with the appropriate task property
-      taskContainer.appendChild(taskElement);
-    });
+// Fetch tasks from the API
+async function fetchTasks() {
+  showLoading("Fetching tasks...");
+  try {
+    const tasks = await fetchWithAuth(`${API_BASE_URL}/tasks`);
+    renderTasks(tasks); // Render the fetched tasks
+  } catch (error) {
+    console.error("Error fetching tasks:", error.message);
+    alert("Failed to load tasks. Please try again.");
+  } finally {
+    hideLoading();
   }
+}
 
-  fetchTasks(); // Call fetchTasks on page load
-});
-
-// Create a new task
+// Add a new task
 async function addTask(event) {
   event.preventDefault();
 
@@ -93,30 +71,35 @@ async function addTask(event) {
     return;
   }
 
-  showLoading(); // Show loading screen
+  showLoading("Adding task...");
   try {
-    const token = localStorage.getItem("jwtToken");
-    const response = await fetch(`${API_BASE_URL}/tasks`, {
+    await fetchWithAuth(`${API_BASE_URL}/tasks`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify({ title }),
     });
-
-    if (response.ok) {
-      await fetchTasks(); // Refetch tasks to update the list
-    } else {
-      const error = await response.json();
-      alert(`Error: ${error.error || "Failed to add task"}`);
-    }
+    await fetchTasks(); // Refresh tasks after adding a new one
   } catch (error) {
-    console.error("Error adding task:", error);
+    console.error("Error adding task:", error.message);
+    alert("Failed to add task. Please try again.");
   } finally {
-    hideLoading(); // Hide loading screen
+    hideLoading();
+  }
+}
+
+// Display a welcome message
+function displayWelcomeMessage() {
+  const userName = localStorage.getItem("userName");
+  const headerTitle = document.getElementById("dashboard-header");
+
+  if (headerTitle) {
+    headerTitle.textContent = userName ? `Welcome, ${userName}!` : "Welcome!";
   }
 }
 
 // Event listeners
-document.getElementById("task-form")?.addEventListener("submit", addTask); // Attach event listener to task form
+document.addEventListener("DOMContentLoaded", () => {
+  displayWelcomeMessage(); // Show user's name
+  fetchTasks(); // Load tasks on page load
+});
+
+document.getElementById("task-form")?.addEventListener("submit", addTask);
