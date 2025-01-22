@@ -24,7 +24,21 @@ async function fetchWithAuth(url, options = {}) {
   return response.json();
 }
 
-// Render tasks in the task container
+// Fetch and render tasks from the API
+async function fetchTasks() {
+  showLoading("Fetching tasks...");
+  try {
+    const tasks = await fetchWithAuth(`${API_BASE_URL}/tasks`);
+    renderTasks(tasks); // Render the fetched tasks
+  } catch (error) {
+    console.error("Error fetching tasks:", error.message);
+    alert("Failed to load tasks. Please try again.");
+  } finally {
+    hideLoading();
+  }
+}
+
+// Render tasks in the DOM
 function renderTasks(tasks) {
   const taskContainer = document.getElementById("task-container");
   if (!taskContainer) {
@@ -41,31 +55,40 @@ function renderTasks(tasks) {
 
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
-    taskElement.className = "task"; // Add styling class if needed
-    taskElement.textContent = task.title; // Adjust to match your Task model
+    taskElement.className = "task";
+    taskElement.innerHTML = `
+      <input type="checkbox" class="task-complete" ${
+        task.completed ? "checked" : ""
+      } />
+      <span class="task-title ${task.completed ? "completed" : ""}">
+        ${task.title}
+      </span>
+      <button class="edit-task">✏️</button>
+      <button class="delete-task">🗑️</button>
+    `;
+
+    // Add functionality to the actions
+    taskElement
+      .querySelector(".task-complete")
+      .addEventListener("change", () => toggleTaskCompletion(task._id));
+    taskElement
+      .querySelector(".edit-task")
+      .addEventListener("click", () => editTask(task));
+    taskElement
+      .querySelector(".delete-task")
+      .addEventListener("click", () => deleteTask(task._id));
+
     taskContainer.appendChild(taskElement);
   });
-}
-
-// Fetch tasks from the API
-async function fetchTasks() {
-  showLoading("Fetching tasks...");
-  try {
-    const tasks = await fetchWithAuth(`${API_BASE_URL}/tasks`);
-    renderTasks(tasks); // Render the fetched tasks
-  } catch (error) {
-    console.error("Error fetching tasks:", error.message);
-    alert("Failed to load tasks. Please try again.");
-  } finally {
-    hideLoading();
-  }
 }
 
 // Add a new task
 async function addTask(event) {
   event.preventDefault();
 
-  const title = document.getElementById("task-title").value;
+  const taskInput = document.getElementById("task-title");
+  const title = taskInput.value;
+
   if (!title) {
     alert("Task title cannot be empty.");
     return;
@@ -77,6 +100,7 @@ async function addTask(event) {
       method: "POST",
       body: JSON.stringify({ title }),
     });
+    taskInput.value = ""; // Clear the input field
     await fetchTasks(); // Refresh tasks after adding a new one
   } catch (error) {
     console.error("Error adding task:", error.message);
@@ -84,6 +108,83 @@ async function addTask(event) {
   } finally {
     hideLoading();
   }
+}
+
+// Edit a task
+async function editTask(task) {
+  const newTitle = prompt("Edit task title:", task.title);
+  if (!newTitle) return;
+
+  try {
+    await fetchWithAuth(`${API_BASE_URL}/tasks/${task._id}`, {
+      method: "PUT",
+      body: JSON.stringify({ title: newTitle }),
+    });
+    await fetchTasks(); // Refresh tasks after editing
+  } catch (error) {
+    console.error("Error editing task:", error.message);
+  }
+}
+
+// Delete a task
+// async function deleteTask(taskId) {
+//   const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+//   if (!confirm("Are you sure you want to delete this task?")) return;
+
+//   try {
+//     await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
+//       method: "DELETE",
+//     });
+
+//     // Remove the task from the DOM
+//     if (taskElement) {
+//       deleteTaskFromDOM(taskElement);
+//     }
+//   } catch (error) {
+//     console.error("Error deleting task:", error.message);
+//     alert("Failed to delete task. Please try again.");
+//   }
+// }
+async function deleteTask(taskId) {
+  if (!taskId) {
+    console.error("Task ID is undefined!");
+    return;
+  }
+
+  const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+  if (!confirm("Are you sure you want to delete this task?")) return;
+
+  try {
+    await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
+      method: "DELETE",
+    });
+
+    if (taskElement) {
+      deleteTaskFromDOM(taskElement);
+    }
+  } catch (error) {
+    console.error("Error deleting task:", error.message);
+    alert("Failed to delete task. Please try again.");
+  }
+}
+
+// Toggle task completion
+async function toggleTaskCompletion(taskId) {
+  try {
+    await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ completed: true }), // Toggle the completion state
+    });
+    await fetchTasks(); // Refresh tasks after toggling
+  } catch (error) {
+    console.error("Error toggling task completion:", error.message);
+  }
+}
+
+// Remove a task element from the DOM (For task deletion to immediately reflect in the UI without fetching the entire task list from the server)
+function deleteTaskFromDOM(taskElement) {
+  taskElement.classList.add("removed"); // Add fade-out animation
+  setTimeout(() => taskElement.remove(), 300); // Remove after animation completes
 }
 
 // Display a welcome message

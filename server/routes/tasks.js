@@ -1,10 +1,10 @@
-const express = require('express');
-const protect = require('../middleware/authMiddleware');
-const Task = require('../models/Task');
+const express = require("express");
+const protect = require("../middleware/authMiddleware");
+const Task = require("../models/Task");
 const router = express.Router();
 
 // Get all tasks for the logged-in user
-router.get('/', protect, async (req, res) => {
+router.get("/", protect, async (req, res) => {
   try {
     const tasks = await Task.find({ user: req.user.id });
     res.status(200).json(tasks);
@@ -14,7 +14,7 @@ router.get('/', protect, async (req, res) => {
 });
 
 // Create a new task
-router.post('/', protect, async (req, res) => {
+router.post("/", protect, async (req, res) => {
   const { title, completed } = req.body;
   try {
     const task = new Task({ title, completed, user: req.user.id });
@@ -26,16 +26,26 @@ router.post('/', protect, async (req, res) => {
 });
 
 // Delete a task
-router.delete('/:id', protect, async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   try {
-    const task = await Task.findById(req.params.id);
-    if (!task || task.user.toString() !== req.user.id)
-      return res.status(404).json({ error: 'Task not found!' });
+    const taskId = req.params.id;
 
-    await task.remove();
-    res.status(200).json({ message: 'Task deleted!' });
+    // Validate taskId
+    if (!taskId) {
+      return res.status(400).json({ error: "Task ID is required." });
+    }
+
+    // Find and delete the task
+    const task = await Task.findByIdAndDelete(taskId);
+
+    if (!task) {
+      return res.status(404).json({ error: "Task not found." });
+    }
+
+    res.status(200).json({ message: "Task deleted successfully." });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error deleting task:", error);
+    res.status(500).json({ error: "Failed to delete task." });
   }
 });
 

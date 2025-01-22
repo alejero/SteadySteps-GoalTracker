@@ -108,24 +108,6 @@ h2 {
   background-color: var(--primary-hover-color);
 }
 
-.message {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  text-align: left;
-}
-
-.message.success {
-  color: #fff;
-  background-color: #28a745;
-}
-
-.message.error {
-  color: #fff;
-  background-color: #dc3545;
-}
-
 /* Dark mode toggle button */
 .dark-mode-toggle {
   position: fixed;
@@ -213,6 +195,18 @@ h2 {
 /* Hide the loading screen when not needed */
 .hidden {
   display: none;
+}
+
+/* Input field focus styling */
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.5);
+}
+/* Input field error styling */
+.input-error {
+  border: 2px solid var(--danger-color); /* Red border for error */
+  background-color: #ffe6e6; /* Light red background for error */
 }
 
 /* Login Section */
@@ -362,7 +356,6 @@ h2 {
 }
 
 /* Animations */
-
 /* Spinner animation */
 .spinner {
   width: 50px;
@@ -384,12 +377,6 @@ h2 {
   }
 }
 
-/* Animation for Form Inputs */
-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.5);
-}
 /* Animation for Buttons */
 .button-primary,
 .button-secondary {
@@ -404,6 +391,41 @@ input:focus {
 /* Animation for Cards */
 .feature-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Animation: Initial state for fade-in */
+.task.animate {
+  transform: translateY(20px);
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards; /* Ensures forward fill mode */
+}
+
+/* Animation: Fade-in effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation: Fade-out effect */
+.task.removed {
+  animation: fadeOut 0.3s ease forwards; /* Ensures forward fill mode */
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 }
 
 /* Form styles */
@@ -447,46 +469,36 @@ form button:hover {
   background-color: var(--primary-hover-color);
 }
 
-/* Task List */
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-/* List Items */
-li {
-  background: var(--background-container-color);
-  color: var(--text-color);
-  padding: 15px;
-  margin-bottom: var(--margin);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* List Items Hover State */
-li:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-li.completed {
-  text-decoration: line-through;
-  color: var(--secondary-color);
-}
-
-li button {
-  background-color: var(--danger-color);
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
+/* Task container styling */
+#task-container {
+  margin: 20px 0;
   padding: 10px;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  background-color: var(
+    --background-container-color
+  ); /* Light background for task area */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-li button:hover {
-  background-color: var(--danger-hover-color);
+/* Base task styles */
+.task {
+  color: var(--text-color, #000); /* Ensure contrast with the background */
+  background-color: var(
+    --task-background-color,
+    #f1f1f1
+  ); /* Light background */
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 5px;
+  transform: translateY(0); /* Default position */
+  opacity: 1; /* Ensure visibility */
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+/* Hover effect for tasks */
+.task:hover {
+  transform: scale(1.02); /* Subtle scaling on hover */
+  opacity: 0.9; /* Slightly dim on hover */
 }
 
 /* Responsive Design */
