@@ -24,31 +24,42 @@ async function postData(url, data) {
 
 // Register a user
 async function registerUser(event) {
-  event.preventDefault(); // Prevent default form submission behavior
-  console.log("Register form submitted");
+  event.preventDefault();
 
-  const name = document.getElementById("register-name")?.value;
-  const username = document.getElementById("register-username")?.value;
-  const email = document.getElementById("register-email")?.value;
-  const password = document.getElementById("register-password")?.value;
+  const name = document.getElementById("register-name").value;
+  const username = document.getElementById("register-username").value;
+  const email = document.getElementById("register-email").value;
+  const password = document.getElementById("register-password").value;
+  const registerButton = document.getElementById("register-button");
 
   if (!name || !username || !email || !password) {
     alert("Please fill in all fields.");
     return;
   }
 
+  showLoading("Registering...");
+  registerButton.disabled = true; // Disable button
+
   try {
-    const result = await postData(`${API_BASE_URL}/auth/register`, {
-      name,
-      username,
-      email,
-      password,
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, username, email, password }),
     });
 
-    alert("Registration successful! Please log in.");
-    window.location.href = "login.html"; // Redirect to login page
+    if (response.ok) {
+      alert("Registration successful! Please log in.");
+      window.location.href = "login.html"; // Redirect to login page
+    } else {
+      const error = await response.json();
+      alert(`Error: ${error.error || "Registration failed"}`);
+    }
   } catch (error) {
-    alert(error.message);
+    console.error("Unexpected error:", error);
+    alert("An unexpected error occurred. Please try again.");
+  } finally {
+    hideLoading();
+    registerButton.disabled = false; // Re-enable button
   }
 }
 
@@ -58,26 +69,27 @@ async function loginUser(event) {
 
   const loginField = document.getElementById("login-field").value;
   const password = document.getElementById("login-password").value;
+  const loginButton = document.getElementById("login-button");
 
   if (!loginField || !password) {
     alert("Please fill in all fields.");
     return;
   }
 
-  showLoading("Logging in..."); // Show loading spinner with message
+  showLoading("Logging in...");
+  loginButton.disabled = true; // Disable button
+
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ login: loginField, password }),
     });
 
     if (response.ok) {
       const { token, user } = await response.json();
       localStorage.setItem("jwtToken", token); // Save token
-      localStorage.setItem("userName", user.name); // Save user's name
+      localStorage.setItem("userName", user.name); // Save user name
       window.location.href = "dashboard.html"; // Redirect to dashboard
     } else {
       const error = await response.json();
@@ -87,7 +99,8 @@ async function loginUser(event) {
     console.error("Unexpected error:", error);
     alert("An unexpected error occurred. Please try again.");
   } finally {
-    hideLoading(); // Hide loading spinner
+    hideLoading();
+    loginButton.disabled = false; // Re-enable button
   }
 }
 

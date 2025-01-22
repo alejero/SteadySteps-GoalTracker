@@ -184,17 +184,30 @@ h2 {
 }
 
 /* General loading screen styling */
+/* Loading screen overlay */
 #loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it appears above other content */
+  z-index: 1000; /* Ensure it appears above all other content */
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 1.2rem;
+}
+
+#loading-screen {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#loading-screen:not(.hidden) {
+  opacity: 1;
 }
 
 /* Hide the loading screen when not needed */
@@ -350,17 +363,18 @@ h2 {
 
 /* Animations */
 
-/* Loading Spinner animation */
+/* Spinner animation */
 .spinner {
   width: 50px;
   height: 50px;
-  border: 6px solid #ccc;
-  border-top: 6px solid #007bff; /* Primary color */
+  border: 6px solid #ddd;
+  border-top: 6px solid #007bff; /* Primary color for spinner */
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 10px; /* Space between spinner and message */
 }
 
-/* Animation for spinner */
+/* Keyframes for spinner rotation */
 @keyframes spin {
   from {
     transform: rotate(0deg);
