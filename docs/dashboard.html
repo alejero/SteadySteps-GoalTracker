@@ -10,9 +10,6 @@
     />
     <link rel="stylesheet" href="styles/styles.css" />
     <script src="scripts/utils.js" defer></script>
-    <script src="scripts/darkmode.js" defer></script>
-    <script src="scripts/app.js" defer></script>
-    <script src="scripts/dashboard.js" defer></script>
   </head>
   <body>
     <!-- Dark Mode Toggle -->
@@ -45,5 +42,14 @@
         <ul id="task-list"></ul>
       </main>
     </div>
+    <script>
+      // Example: Hiding the loading screen after the initial load
+      document.addEventListener("DOMContentLoaded", () => {
+        hideLoading();
+      });
+    </script>
+    <script src="scripts/darkmode.js"></script>
+    <script src="scripts/app.js"></script>
+    <script src="scripts/dashboard.js"></script>
   </body>
 </html>
