@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://steadysteps-goaltracker.onrender.com/api"; // Update with Render URL after deployment
+import { API_BASE_URL } from "./config.js"; // Import the shared constant
 
 const token = localStorage.getItem("jwtToken");
 
