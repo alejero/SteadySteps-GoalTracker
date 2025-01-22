@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 
 // CORS setup
 app.use(cors({
-    origin: "https://alejero.github.io/", // Allow only this domain
+    origin: ["http://localhost:5500", "https://alejero.github.io"], // Allow only these domains to make requests
     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   }));
