@@ -183,6 +183,25 @@ h2 {
   fill: white;
 }
 
+/* General loading screen styling */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+/* Hide the loading screen when not needed */
+.hidden {
+  display: none;
+}
+
 /* Login Section */
 .login-section {
   text-align: center;
@@ -330,6 +349,26 @@ h2 {
 }
 
 /* Animations */
+
+/* Loading Spinner animation */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ccc;
+  border-top: 6px solid #007bff; /* Primary color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animation for spinner */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Animation for Form Inputs */
 input:focus {

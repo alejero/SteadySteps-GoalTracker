@@ -9,16 +9,32 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link rel="stylesheet" href="styles/styles.css" />
-    <script src="scripts/app.js" defer></script>
+    <script src="scripts/utils.js" defer></script>
     <script src="scripts/darkmode.js" defer></script>
+    <script src="scripts/app.js" defer></script>
     <script src="scripts/dashboard.js" defer></script>
   </head>
   <body>
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="dark-mode-toggle">
+      <i id="toggle-icon" class="fas fa-moon"></i>
+    </button>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden">
+      <div class="spinner">Fetching tasks...</div>
+    </div>
     <div class="container">
       <header>
-        <h1 id="dashboard-header">Welcome!</h1> <!-- Placeholder, updated dynamically -->
+        <h1 id="dashboard-header">Welcome!</h1>
+        <!-- Placeholder, updated dynamically -->
       </header>
       <main>
+        <!-- Task container to display tasks dynamically -->
+        <div id="task-container" class="tasks">
+          <p>No tasks yet. Add some to get started!</p>
+          <!-- Default message -->
+        </div>
         <form id="task-form">
           <label for="task-title">Add New Task:</label>
           <input type="text" id="task-title" required />
@@ -28,11 +44,4 @@
       </main>
     </div>
   </body>
-  <button
-    class="dark-mode-toggle"
-    id="dark-mode-toggle"
-    data-tooltip="Toggle Dark Mode"
-  >
-    <i id="toggle-icon" class="fas fa-moon"></i>
-  </button>
 </html>

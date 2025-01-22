@@ -37,31 +37,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fetch and display tasks
   async function fetchTasks() {
+    showLoading(); // Show loading screen
     try {
-      const token = localStorage.getItem("jwtToken"); // Retrieve the JWT token
+      const token = localStorage.getItem("jwtToken");
       const response = await fetch(`${API_BASE_URL}/tasks`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.ok) {
         const tasks = await response.json();
-        renderTasks(tasks); // Function to render tasks in the UI
+        renderTasks(tasks); // Render tasks in the UI
       } else {
         console.error("Failed to fetch tasks:", response.status);
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
+    } finally {
+      hideLoading(); // Hide loading screen
     }
   }
 
   function renderTasks(tasks) {
-    const taskContainer = document.getElementById("task-container"); // Container for tasks
-    taskContainer.innerHTML = ""; // Clear any existing tasks
+    const taskContainer = document.getElementById("task-container");
+    if (!taskContainer) {
+      console.error("Task container not found!");
+      return;
+    }
+
+    taskContainer.innerHTML = ""; // Clear existing tasks
+
+    if (tasks.length === 0) {
+      // Display a message if no tasks are available
+      taskContainer.innerHTML = "<p>No tasks yet. Add some to get started!</p>";
+      return;
+    }
 
     tasks.forEach((task) => {
       const taskElement = document.createElement("div");
-      taskElement.className = "task";
-      taskElement.textContent = task.title; // Adjust based on your task model
+      taskElement.className = "task"; // Add styling class if needed
+      taskElement.textContent = task.title; // Replace with the appropriate task property
       taskContainer.appendChild(taskElement);
     });
   }
@@ -74,9 +88,14 @@ async function addTask(event) {
   event.preventDefault();
 
   const title = document.getElementById("task-title").value;
-  const token = localStorage.getItem("jwtToken");
+  if (!title) {
+    alert("Task title cannot be empty.");
+    return;
+  }
 
+  showLoading(); // Show loading screen
   try {
+    const token = localStorage.getItem("jwtToken");
     const response = await fetch(`${API_BASE_URL}/tasks`, {
       method: "POST",
       headers: {
@@ -87,13 +106,15 @@ async function addTask(event) {
     });
 
     if (response.ok) {
-      fetchTasks(); // Refetch tasks to update the dashboard
+      await fetchTasks(); // Refetch tasks to update the list
     } else {
       const error = await response.json();
-      console.error("Error adding task:", error);
+      alert(`Error: ${error.error || "Failed to add task"}`);
     }
   } catch (error) {
     console.error("Error adding task:", error);
+  } finally {
+    hideLoading(); // Hide loading screen
   }
 }
 

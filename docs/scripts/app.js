@@ -56,14 +56,15 @@ async function registerUser(event) {
 async function loginUser(event) {
   event.preventDefault();
 
-  const loginField = document.getElementById("login-field").value; // Email or username
+  const loginField = document.getElementById("login-field").value;
   const password = document.getElementById("login-password").value;
 
   if (!loginField || !password) {
-    alert("Please fill in all fields."); // Minimal validation feedback
+    alert("Please fill in all fields.");
     return;
   }
 
+  showLoading("Logging in..."); // Show loading spinner with message
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: "POST",
@@ -75,16 +76,18 @@ async function loginUser(event) {
 
     if (response.ok) {
       const { token, user } = await response.json();
-      localStorage.setItem("jwtToken", token); // Save the JWT token for authenticated requests
-      localStorage.setItem("userName", user.name); // Save the user's name for the dashboard
-      window.location.href = `dashboard.html`; // Redirect to dashboard
+      localStorage.setItem("jwtToken", token); // Save token
+      localStorage.setItem("userName", user.name); // Save user's name
+      window.location.href = "dashboard.html"; // Redirect to dashboard
     } else {
       const error = await response.json();
-      alert(`Error: ${error.error || "Login failed"}`); // Display error message
+      alert(`Error: ${error.error || "Login failed"}`);
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    alert("An unexpected error occurred. Please try again later."); // Generic error message
+    alert("An unexpected error occurred. Please try again.");
+  } finally {
+    hideLoading(); // Hide loading spinner
   }
 }
 
