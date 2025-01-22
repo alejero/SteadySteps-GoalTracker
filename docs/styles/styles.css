@@ -195,7 +195,7 @@ h2 {
   display: none; /* Hidden by default */
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure it appears above all other content */
+  z-index: 9999; /* High enough to overlay all other content */
   color: #fff;
   font-family: Arial, sans-serif;
   font-size: 1.2rem;
