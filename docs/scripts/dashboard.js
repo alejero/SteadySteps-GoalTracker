@@ -37,23 +37,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Fetch and display tasks
   async function fetchTasks() {
-    showLoading(); // Show loading screen
+    showLoading("Fetching tasks...");
+  
     try {
       const token = localStorage.getItem("jwtToken");
       const response = await fetch(`${API_BASE_URL}/tasks`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (response.ok) {
         const tasks = await response.json();
-        renderTasks(tasks); // Render tasks in the UI
+        renderTasks(tasks); // Render tasks dynamically
       } else {
         console.error("Failed to fetch tasks:", response.status);
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
     } finally {
-      hideLoading(); // Hide loading screen
+      hideLoading();
     }
   }
 
