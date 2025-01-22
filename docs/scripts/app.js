@@ -55,13 +55,12 @@ async function registerUser(event) {
 // Login a user
 async function loginUser(event) {
   event.preventDefault();
-  console.log("Login form submitted");
 
-  const loginField = document.getElementById("login-field").value; // Can be email or username
+  const loginField = document.getElementById("login-field").value; // Email or username
   const password = document.getElementById("login-password").value;
 
   if (!loginField || !password) {
-    displayMessage("Please fill in all fields.", "error");
+    alert("Please fill in all fields."); // Minimal validation feedback
     return;
   }
 
@@ -76,26 +75,17 @@ async function loginUser(event) {
 
     if (response.ok) {
       const { token, user } = await response.json();
-      localStorage.setItem("jwtToken", token); // Store token for future API requests
-      localStorage.setItem("userName", user.name); // Save user's name for display
-      window.location.href = `dashboard.html?name=${encodeURIComponent(user.name)}`; // Redirect to dashboard
+      localStorage.setItem("jwtToken", token); // Save the JWT token for authenticated requests
+      localStorage.setItem("userName", user.name); // Save the user's name for the dashboard
+      window.location.href = `dashboard.html`; // Redirect to dashboard
     } else {
       const error = await response.json();
-      displayMessage(`Error: ${error.error || "Login failed"}`, "error");
+      alert(`Error: ${error.error || "Login failed"}`); // Display error message
     }
   } catch (error) {
     console.error("Unexpected error:", error);
-    displayMessage("An unexpected error occurred. Please try again later.", "error");
+    alert("An unexpected error occurred. Please try again later."); // Generic error message
   }
-}
-
-// Helper function to display messages dynamically
-function displayMessage(message, type) {
-  const messageContainer = document.getElementById("message-container");
-  if (!messageContainer) return;
-
-  messageContainer.textContent = message;
-  messageContainer.className = `message ${type}`; // Use CSS classes for styling
 }
 
 // Attach event listener for register form
