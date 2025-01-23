@@ -56,6 +56,7 @@ function renderTasks(tasks) {
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
     taskElement.className = "task";
+    taskElement.setAttribute("data-task-id", task._id); // Assign the task ID
     taskElement.innerHTML = `
       <input type="checkbox" class="task-complete" ${
         task.completed ? "checked" : ""
@@ -73,7 +74,7 @@ function renderTasks(tasks) {
       .addEventListener("change", () => toggleTaskCompletion(task._id));
     taskElement
       .querySelector(".edit-task")
-      .addEventListener("click", () => editTask(task));
+      .addEventListener("click", () => editTask(task)); // Attach edit button handler
     taskElement
       .querySelector(".delete-task")
       .addEventListener("click", () => deleteTask(task._id));
@@ -116,35 +117,20 @@ async function editTask(task) {
   if (!newTitle) return;
 
   try {
-    await fetchWithAuth(`${API_BASE_URL}/tasks/${task._id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/tasks/${task._id}`, {
       method: "PUT",
       body: JSON.stringify({ title: newTitle }),
     });
+
+    console.log("Task updated successfully:", response);
     await fetchTasks(); // Refresh tasks after editing
   } catch (error) {
     console.error("Error editing task:", error.message);
+    alert(error.message || "Failed to edit task. Please try again.");
   }
 }
 
 // Delete a task
-// async function deleteTask(taskId) {
-//   const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-//   if (!confirm("Are you sure you want to delete this task?")) return;
-
-//   try {
-//     await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
-//       method: "DELETE",
-//     });
-
-//     // Remove the task from the DOM
-//     if (taskElement) {
-//       deleteTaskFromDOM(taskElement);
-//     }
-//   } catch (error) {
-//     console.error("Error deleting task:", error.message);
-//     alert("Failed to delete task. Please try again.");
-//   }
-// }
 async function deleteTask(taskId) {
   if (!taskId) {
     console.error("Task ID is undefined!");
@@ -159,6 +145,7 @@ async function deleteTask(taskId) {
       method: "DELETE",
     });
 
+    // Remove the task from the DOM
     if (taskElement) {
       deleteTaskFromDOM(taskElement);
     }
@@ -183,8 +170,21 @@ async function toggleTaskCompletion(taskId) {
 
 // Remove a task element from the DOM (For task deletion to immediately reflect in the UI without fetching the entire task list from the server)
 function deleteTaskFromDOM(taskElement) {
+  if (!taskElement) {
+    console.error("Task element not found for deletion.");
+    return;
+  }
+
   taskElement.classList.add("removed"); // Add fade-out animation
-  setTimeout(() => taskElement.remove(), 300); // Remove after animation completes
+  setTimeout(() => {
+    taskElement.remove(); // Remove the task from the DOM after animation
+
+    // Check if the task container is empty
+    const taskContainer = document.getElementById("task-container");
+    if (taskContainer && taskContainer.children.length === 0) {
+      taskContainer.innerHTML = "<p>No tasks yet. Add some to get started!</p>";
+    }
+  }, 300); // Match CSS animation duration
 }
 
 // Display a welcome message

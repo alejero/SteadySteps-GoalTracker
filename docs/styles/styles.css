@@ -10,6 +10,7 @@
   --primary-hover-color: #005bb5; /* Darker blue for hover */
   --danger-color: #ff3b30; /* iOS red for delete actions */
   --danger-hover-color: #c62828;
+  --task-background-color: #f1f1f1; /* Light background for tasks */
 
   /* Spacing */
   --padding: 20px;
@@ -23,7 +24,7 @@
 }
 
 /* Colors for Dark Mode */
-body.dark-mode {
+:root.dark-mode {
   --hero-footer-background-color: #2c2c2e; /* Dark footer background */
   --background-color: #1c1c1e; /* Dark neutral background */
   --background-container-color: #2c2c2e; /* Dark container background */
@@ -33,6 +34,7 @@ body.dark-mode {
   --primary-hover-color: #0066cc; /* Hover blue */
   --danger-color: #ff453a; /* Lighter red for dark mode */
   --danger-hover-color: #b00020;
+  --task-background-color: #333333; /* Dark background for tasks */
 }
 
 /* Global styles */
@@ -242,7 +244,7 @@ input:focus {
   text-decoration: underline;
 }
 
-/* Header Section */
+/* Hero Section */
 .hero {
   background-color: var(--hero-footer-background-color);
   color: var(--text-color);
@@ -353,6 +355,57 @@ input:focus {
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+/* Dashboard Section */
+/* Header container */
+#dashboard-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align to the left */
+  padding: 20px;
+  background-color: var(--background-container-color);
+  border-bottom: 2px solid #ddd; /* Subtle bottom border */
+}
+
+/* Header text */
+#dashboard-header {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: var(--text-color);
+}
+
+/* Task container styling */
+#task-container {
+  margin: 20px 0;
+  padding: 10px;
+  background-color: var(
+    --background-container-color
+  ); /* Light background for task area */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Base task styles */
+.task {
+  color: var(--text-color, #000); /* Ensure contrast with the background */
+  background-color: var(
+    --task-background-color,
+    #f1f1f1
+  ); /* Light background */
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 5px;
+  transform: translateY(0); /* Default position */
+  opacity: 1; /* Ensure visibility */
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+
+/* Hover effect for tasks */
+.task:hover {
+  transform: scale(1.02); /* Subtle scaling on hover */
+  opacity: 0.9; /* Slightly dim on hover */
 }
 
 /* Animations */
@@ -467,38 +520,6 @@ form button {
 
 form button:hover {
   background-color: var(--primary-hover-color);
-}
-
-/* Task container styling */
-#task-container {
-  margin: 20px 0;
-  padding: 10px;
-  background-color: var(
-    --background-container-color
-  ); /* Light background for task area */
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Base task styles */
-.task {
-  color: var(--text-color, #000); /* Ensure contrast with the background */
-  background-color: var(
-    --task-background-color,
-    #f1f1f1
-  ); /* Light background */
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 5px;
-  transform: translateY(0); /* Default position */
-  opacity: 1; /* Ensure visibility */
-  transition: transform 0.2s ease, opacity 0.3s ease;
-}
-
-/* Hover effect for tasks */
-.task:hover {
-  transform: scale(1.02); /* Subtle scaling on hover */
-  opacity: 0.9; /* Slightly dim on hover */
 }
 
 /* Responsive Design */
