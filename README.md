@@ -31,7 +31,7 @@ SteadySteps-GoalTracker is a web application designed to help users set, track, 
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/SteadySteps-GoalTracker.git
+    git clone https://github.com/alejero/SteadySteps-GoalTracker.git
     ```
 2. Navigate to the project directory:
     ```bash
