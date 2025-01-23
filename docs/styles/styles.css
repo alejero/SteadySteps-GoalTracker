@@ -402,13 +402,57 @@ input:focus {
   transition: transform 0.2s ease, opacity 0.3s ease;
 }
 
-/* Hover effect for tasks */
+/* Animations */
+/* Task Hover Animation */
 .task:hover {
-  transform: scale(1.02); /* Subtle scaling on hover */
+  transform: scale(1.01); /* Subtle scaling on hover */
   opacity: 0.9; /* Slightly dim on hover */
 }
 
-/* Animations */
+/* Button Hover Animation */
+button:hover {
+  transform: scale(1.01);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+/* Add Task Animation */
+/* Highlight effect for new tasks */
+.highlight {
+    background-color: var(--primary-color);
+    color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+.task.added {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Remove Task Animation */
+.task.removed {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
 /* Spinner animation */
 .spinner {
   width: 50px;
