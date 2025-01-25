@@ -358,26 +358,33 @@ input:focus {
 }
 
 /* Dashboard Section */
-/* Header container */
-#dashboard-header-container {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Align to the left */
-  padding: 20px;
+/* Welcome card */
+#welcome-card {
   background-color: var(--background-container-color);
-  border-bottom: 2px solid #ddd; /* Subtle bottom border */
+  color: var(--text-color);
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Header text */
-#dashboard-header {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-  color: var(--text-color);
+#welcome-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+#welcome-card p {
+  font-size: 1rem;
+  color: var(--secondary-text-color);
 }
 
 /* Task container styling */
 #task-container {
+  display: flex; /* Change to flex or grid for spacing */
+  flex-direction: column; /* Stack tasks vertically */
+  gap: 10px; /* Adds consistent gap between tasks */
   margin: 20px 0;
   padding: 10px;
   background-color: var(
@@ -387,22 +394,156 @@ input:focus {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Base task styles */
-.task {
-  color: var(--text-color, #000); /* Ensure contrast with the background */
-  background-color: var(
-    --task-background-color,
-    #f1f1f1
-  ); /* Light background */
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 5px;
-  transform: translateY(0); /* Default position */
-  opacity: 1; /* Ensure visibility */
-  transition: transform 0.2s ease, opacity 0.3s ease;
+/* Empty State Container */
+#task-container {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  min-height: 200px;
 }
 
+/* Empty state styles */
+/* Show empty state when container is empty */
+#empty-state {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center horizontally */
+  justify-content: center; /* Center vertically */
+  margin: 0 auto; /* Center within parent */
+  padding: 20px;
+  color: var(--secondary-text-color);
+  animation: fadeIn 0.5s ease;
+}
+
+#empty-state svg {
+  width: 150px; /* Set fixed size */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+#empty-state.hidden {
+  display: none; /* Hide empty state */
+}
+
+/* Base task styles */
+.task {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: var(--task-background-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+/* Testing styling */
+/* Add Task Container */
+#add-task-container {
+  overflow: hidden;
+  height: 0; /* Start collapsed */
+  transition: height 0.4s ease, padding 0.4s ease;
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  margin-top: 10px;
+  padding: 0 15px; /* Padding is animated */
+}
+
+/* When visible */
+#add-task-container.visible {
+  height: auto;
+  padding: 20px 15px;
+}
+
+/* Form Layout */
+.add-task-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.add-task-form input {
+  flex: 3;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid var(--secondary-text-color);
+  border-radius: var(--border-radius);
+  background-color: var(--background-container-color);
+  color: var(--text-color);
+}
+
+.add-task-form input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px var(--primary-color);
+}
+
+.add-task-form button {
+  flex: 1;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-task-form button:hover {
+  background-color: var(--primary-hover-color);
+  transform: scale(1.05);
+}
+
+/* Add Task Toggle Button */
+.add-task-toggle {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-task-toggle:hover {
+  background-color: var(--primary-hover-color);
+  transform: scale(1.05);
+}
+
+/* Toggle Wrapper */
+.toggle-wrapper {
+  text-align: center; /* Centers the button horizontally */
+  margin-top: 10px;
+}
+/* ---------------- */
+
 /* Animations */
+
+/* Add Task Container (Hidden by Default) */
+#add-task-container {
+  overflow: hidden; /* Ensures content doesn't spill during animation */
+  height: 0; /* Initially hidden */
+  transition: height 0.4s ease, padding 0.4s ease; /* Smooth height and padding changes */
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  margin-top: 10px;
+  padding: 0 15px; /* Padding is also animated */
+}
+
+/* Visible State */
+#add-task-container.visible {
+  height: auto; /* Expand to fit content */
+  padding: 20px 15px; /* Add inner spacing when visible */
+}
+
 /* Task Hover Animation */
 .task:hover {
   transform: scale(1.01); /* Subtle scaling on hover */
@@ -418,10 +559,10 @@ button:hover {
 /* Add Task Animation */
 /* Highlight effect for new tasks */
 .highlight {
-    background-color: var(--primary-color);
-    color: white;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
+  background-color: var(--primary-color);
+  color: white;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 .task.added {
   animation: fadeIn 0.5s ease;
 }
@@ -591,4 +732,21 @@ form button:hover {
     margin-top: 10px;
     width: 100%;
   }
+
+  .add-task-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .add-task-form button {
+    width: 100%; /* Full width button for mobile */
+  }
+
+  .add-task-form input {
+    width: 100%; /* Full width input for mobile */
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
 }
