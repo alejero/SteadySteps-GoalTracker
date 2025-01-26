@@ -46,26 +46,31 @@ async function fetchTasks() {
 // Render tasks in the DOM
 function renderTasks(tasks) {
   const taskContainer = document.getElementById("task-container");
-  const emptyState = document.getElementById("empty-state");
+  const emptyStateContainer = document.getElementById("empty-state-container");
 
-  if (!taskContainer || !emptyState) {
-    console.error("Task container or empty state element not found!");
+  if (!taskContainer || !emptyStateContainer) {
+    console.error("Task container or empty state container not found!");
     return;
   }
 
-  // Clear container before rendering
+  // Clear the task container
   taskContainer.innerHTML = "";
 
   if (!Array.isArray(tasks) || tasks.length === 0) {
-    emptyState.classList.remove("hidden"); // Show empty state
+    // If no tasks, show the empty-state-container and hide the task-container
+    taskContainer.style.display = "none";
+    emptyStateContainer.style.display = "flex"; // Ensure it's visible
     return;
   }
 
-  emptyState.classList.add("hidden"); // Hide empty state
+  // If tasks exist, show the task-container and hide the empty-state-container
+  taskContainer.style.display = "flex"; // Ensure it's visible
+  emptyStateContainer.style.display = "none";
 
+  // Populate the task container
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
-    taskElement.className = "task";
+    taskElement.className = "task"; // This ensures the task gets the correct styles
     taskElement.innerHTML = `
       <div class="task-content">
         <input type="checkbox" class="task-complete" ${
@@ -98,30 +103,28 @@ function renderTasks(tasks) {
 
 // Add a new task
 async function addTask(event) {
-  event.preventDefault();
+  event.preventDefault(); // Prevent form from submitting normally
 
   const taskInput = document.getElementById("task-title");
-  const title = taskInput.value.trim();
+  const title = taskInput?.value.trim();
 
   if (!title) {
     alert("Task title cannot be empty.");
     return;
   }
 
-  showLoading("Adding task...");
   try {
-    const response = await fetchWithAuth(`${API_BASE_URL}/tasks`, {
+    showLoading("Adding task...");
+    await fetchWithAuth(`${API_BASE_URL}/tasks`, {
       method: "POST",
       body: JSON.stringify({ title }),
     });
 
-    if (response.ok) {
-      taskInput.value = ""; // Clear the input field
-      const tasks = await fetchTasks(); // Fetch updated task list
-      
-    } else {
-      console.error("Failed to add task:", response.status);
-    }
+    taskInput.value = ""; // Clear the input field
+
+    // Refresh tasks and update UI
+    const tasks = await fetchTasks();
+    updateWelcomeCard(tasks);
   } catch (error) {
     console.error("Error adding task:", error.message);
     alert("Failed to add task. Please try again.");
@@ -156,7 +159,6 @@ async function deleteTask(taskId) {
     return;
   }
 
-  const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
   if (!confirm("Are you sure you want to delete this task?")) return;
 
   try {
@@ -165,14 +167,9 @@ async function deleteTask(taskId) {
       method: "DELETE",
     });
 
-    // Remove task from DOM immediately
-    if (taskElement) {
-      deleteTaskFromDOM(taskElement);
-    }
-
-    // Fetch the updated tasks and update the welcome card
-    const tasks = await fetchTasks(); // This will also re-render tasks
-    updateWelcomeCard(tasks); // Ensure welcome card reflects the new stats
+    // Refresh tasks and update UI
+    const tasks = await fetchTasks();
+    updateWelcomeCard(tasks); // Update welcome stats
   } catch (error) {
     console.error("Error deleting task:", error.message);
     alert("Failed to delete task. Please try again.");
@@ -236,75 +233,90 @@ function updateWelcomeCard(tasks) {
   }
 }
 
+// Setup Add Task section
+
 function setupAddTaskSection() {
   const toggleButton = document.getElementById("toggle-add-task");
   const addTaskSection = document.getElementById("add-task-section");
   const addTaskForm = document.getElementById("add-task-form");
 
-  // Toggle visibility
+  if (!toggleButton || !addTaskSection || !addTaskForm) {
+    console.error("Required elements for Add Task section not found!");
+    return;
+  }
+
   toggleButton.addEventListener("click", () => {
     const isVisible = addTaskSection.classList.contains("visible");
 
     if (isVisible) {
-      // Collapse the section
       addTaskSection.classList.remove("visible");
       addTaskSection.classList.add("hidden");
       toggleButton.textContent = "+ Add New Task";
     } else {
-      // Expand the section
       addTaskSection.classList.remove("hidden");
       addTaskSection.classList.add("visible");
       toggleButton.textContent = "Close Add Task";
     }
   });
 
-  // Handle form submission
-  addTaskForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  addTaskForm.addEventListener("submit", addTask);
+}
 
-    const taskTitle = document.getElementById("task-title").value;
+// Add Task Handler
+async function handleAddTask(event) {
+  event.preventDefault();
 
-    if (!taskTitle) {
-      alert("Task title cannot be empty!");
-      return;
-    }
+  const taskInput = document.getElementById("task-title");
+  const title = taskInput?.value.trim();
 
-    try {
-      showLoading("Adding task...");
-      await fetchWithAuth(`${API_BASE_URL}/tasks`, {
-        method: "POST",
-        body: JSON.stringify({ title: taskTitle }),
-      });
+  if (!title) {
+    alert("Task title cannot be empty.");
+    return;
+  }
 
-      // Reset the form and collapse the section
-      document.getElementById("task-title").value = "";
+  try {
+    showLoading("Adding task...");
+
+    // Add the task via the API
+    await fetchWithAuth(`${API_BASE_URL}/tasks`, {
+      method: "POST",
+      body: JSON.stringify({ title }),
+    });
+
+    // Clear the input field
+    taskInput.value = "";
+
+    // Refresh tasks and update UI
+    const tasks = await fetchTasks();
+    updateWelcomeCard(tasks); // Update welcome stats
+
+    // Collapse Add Task section
+    const addTaskSection = document.getElementById("add-task-section");
+    const toggleButton = document.getElementById("toggle-add-task");
+
+    if (addTaskSection && toggleButton) {
       addTaskSection.classList.remove("visible");
       addTaskSection.classList.add("hidden");
       toggleButton.textContent = "+ Add New Task";
-
-      fetchTasks(); // Refresh task list
-    } catch (error) {
-      console.error("Error adding task:", error.message);
-      alert("Failed to add task. Please try again.");
-    } finally {
-      hideLoading();
     }
-  });
+  } catch (error) {
+    console.error("Error adding task:", error.message);
+    alert("Failed to add task. Please try again.");
+  } finally {
+    hideLoading();
+  }
 }
 
 // Event listeners
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Fetch tasks and update the welcome card
     const tasks = await fetchTasks();
     updateWelcomeCard(tasks);
+    setupAddTaskSection();
   } catch (error) {
     console.error("Error initializing dashboard:", error.message);
-    updateWelcomeCard([]); // Ensure the welcome card still renders without tasks
+    updateWelcomeCard([]);
   }
-
-  // Setup the Add New Task section
-  setupAddTaskSection();
 });
 
 document.getElementById("add-task-form")?.addEventListener("submit", addTask);

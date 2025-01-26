@@ -359,15 +359,14 @@ input:focus {
 
 /* Dashboard Section */
 /* Welcome card */
+/* Welcome Card */
 #welcome-card {
-  background-color: var(--background-container-color);
-  color: var(--text-color);
+  margin-bottom: 30px;
   padding: 20px;
-  margin-bottom: 20px;
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: var(--background-container-color);
+  border-radius: 12px;
   text-align: center;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 #welcome-card h2 {
@@ -382,49 +381,54 @@ input:focus {
 
 /* Task container styling */
 #task-container {
-  display: flex; /* Change to flex or grid for spacing */
-  flex-direction: column; /* Stack tasks vertically */
-  gap: 10px; /* Adds consistent gap between tasks */
-  margin: 20px 0;
-  padding: 10px;
-  background-color: var(
-    --background-container-color
-  ); /* Light background for task area */
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-/* Empty State Container */
-#task-container {
-  margin: 20px 0;
+  position: relative;
+  min-height: 150px;
   padding: 20px;
   background-color: var(--background-container-color);
   border-radius: var(--border-radius);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Add space between tasks */
 }
 
 /* Empty state styles */
 /* Show empty state when container is empty */
-#empty-state {
-  display: flex;
-  flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center horizontally */
-  justify-content: center; /* Center vertically */
-  margin: 0 auto; /* Center within parent */
+#empty-state-container {
+  display: none; /* Hidden by default */
+  flex-direction: column; /* Stack children vertically */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 200px; /* Adjust based on your design */
   padding: 20px;
-  color: var(--secondary-text-color);
-  animation: fadeIn 0.5s ease;
-}
-
-#empty-state svg {
-  width: 150px; /* Set fixed size */
-  height: auto;
-  margin-bottom: 20px;
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  gap: 15px; /* Adds space between SVG and text */
 }
 
 #empty-state.hidden {
-  display: none; /* Hide empty state */
+  opacity: 0;
+  pointer-events: none; /* Prevent interaction when hidden */
+}
+#empty-state:not(.hidden) {
+  opacity: 1; /* Show the empty state */
+  visibility: visible;
+}
+
+/* SVG and Text Styling */
+#empty-state-container svg {
+  width: 100px; /* Adjust as needed */
+  height: auto;
+  opacity: 0.8; /* Subtle styling */
+  color: var(--secondary-text-color);
+}
+
+#empty-state-container p {
+  font-size: 16px; /* Adjust font size */
+  color: var(--secondary-text-color); /* Muted text color */
+  margin: 0;
 }
 
 /* Base task styles */
@@ -441,20 +445,13 @@ input:focus {
 
 /* Testing styling */
 /* Add Task Container */
-#add-task-container {
-  overflow: hidden;
-  height: 0; /* Start collapsed */
-  transition: height 0.4s ease, padding 0.4s ease;
-  background-color: var(--background-container-color);
-  border-radius: var(--border-radius);
-  margin-top: 10px;
-  padding: 0 15px; /* Padding is animated */
+#add-task-section {
+  margin-top: 20px; /* Space above the Add Task section */
 }
 
-/* When visible */
-#add-task-container.visible {
-  height: auto;
-  padding: 20px 15px;
+/* Ensure smooth transition when collapsing/expanding the Add Task section */
+#add-task-section {
+  transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
 /* Form Layout */
@@ -498,24 +495,28 @@ input:focus {
   transform: scale(1.05);
 }
 
-/* Add Task Toggle Button */
-.add-task-toggle {
-  display: block;
-  margin: 20px auto;
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
+/* Add New Task Button */
+#toggle-add-task {
+  margin: 20px auto; /* Center horizontally */
+  padding: 10px 30px;
+  border: none;
+  border-radius: 16px; /* Softer corners */
   background-color: var(--primary-color);
   color: white;
-  border: none;
-  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: bold;
   cursor: pointer;
+  display: block; /* Make it a block element */
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.add-task-toggle:hover {
+#toggle-add-task:hover {
   background-color: var(--primary-hover-color);
-  transform: scale(1.05);
+  transform: translateY(-2px); /* Subtle lift effect */
+}
+
+#toggle-add-task:active {
+  transform: translateY(1px); /* Active press effect */
 }
 
 /* Toggle Wrapper */
