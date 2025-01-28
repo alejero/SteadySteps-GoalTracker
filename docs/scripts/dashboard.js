@@ -1,8 +1,14 @@
 import { API_BASE_URL } from "./config.js";
+import {
+  initializeSession,
+  getToken,
+  resetLogoutTimer,
+  initializeInactivityListener,
+} from "./auth.js";
 
 // Helper function for authenticated fetch requests
 async function fetchWithAuth(url, options = {}) {
-  const token = localStorage.getItem("jwtToken");
+  const token = getToken(); // Get token from either storage
   if (!token) {
     console.error("No token found in localStorage.");
     throw new Error("Unauthorized: No token available.");
@@ -310,12 +316,35 @@ async function handleAddTask(event) {
 // Event listeners
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const tasks = await fetchTasks();
-    updateWelcomeCard(tasks);
+    console.log("Initializing dashboard...");
+
+    // Step 1: Validate session
+    const sessionValid = initializeSession(); // This should check token validity
+    if (!sessionValid) {
+      console.warn("Session invalid. Redirecting to login.");
+      return; // Stop further execution if session is invalid
+    }
+
+    // Step 2: Fetch and render tasks
+    console.log("Fetching tasks...");
+    const tasks = await fetchTasks(); // Fetch and render tasks
+    updateWelcomeCard(tasks); // Update the welcome card stats
+
+    // Step 3: Set up the "Add Task" section
+    console.log("Setting up Add Task section...");
     setupAddTaskSection();
+
+    // Step 4: Initialize inactivity logout
+    console.log("Initializing inactivity logout...");
+    resetLogoutTimer(); // Reset the inactivity logout timer
+    initializeInactivityListener(); // Start inactivity logout timer
+
+    console.log("Dashboard initialized successfully.");
   } catch (error) {
     console.error("Error initializing dashboard:", error.message);
-    updateWelcomeCard([]);
+
+    // Ensure fallback behavior
+    updateWelcomeCard([]); // Display a fallback welcome card
   }
 });
 

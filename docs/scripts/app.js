@@ -66,8 +66,9 @@ async function registerUser(event) {
 async function loginUser(event) {
   event.preventDefault();
 
-  const loginField = document.getElementById("login-field").value;
-  const password = document.getElementById("login-password").value;
+  const loginField = document.getElementById("login-field").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+  const rememberMe = document.getElementById("remember-me").checked; // Check "Remember Me"
   const loginButton = document.getElementById("login-button");
 
   if (!loginField || !password) {
@@ -76,7 +77,7 @@ async function loginUser(event) {
   }
 
   showLoading("Logging in...");
-  loginButton.disabled = true; // Disable button
+  loginButton.disabled = true; // Disable button during login
 
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -87,8 +88,15 @@ async function loginUser(event) {
 
     if (response.ok) {
       const { token, user } = await response.json();
-      localStorage.setItem("jwtToken", token); // Save token
-      localStorage.setItem("userName", user.name); // Save user name
+
+      // Store the token in the correct storage
+      if (rememberMe) {
+        localStorage.setItem("jwtToken", token); // Save in localStorage
+      } else {
+        sessionStorage.setItem("jwtToken", token); // Save in sessionStorage
+      }
+
+      localStorage.setItem("userName", user.name); // Save user name for personalization
       window.location.href = "dashboard.html"; // Redirect to dashboard
     } else {
       const error = await response.json();
@@ -103,14 +111,58 @@ async function loginUser(event) {
   }
 }
 
-// Attach event listener for register form
-const registerForm = document.getElementById("register-form");
-if (registerForm) {
-  registerForm.addEventListener("submit", registerUser);
-}
+// Initialize the landing page
+document.addEventListener("DOMContentLoaded", () => {
+  hideLoading(); // Ensure the loading screen is hidden after page load.
 
-// Attach event listener for login form
-const loginForm = document.getElementById("login-form");
-if (loginForm) {
-  loginForm.addEventListener("submit", loginUser);
-}
+  // Detect the current page based on the URL or a unique element.
+  const currentPage = window.location.pathname;
+
+  // Initialize the landing page
+  if (currentPage.endsWith("index.html") || currentPage === "/") {
+    console.log("Landing page initialized.");
+
+    const loginPageButton = document.getElementById("login-button");
+    if (loginPageButton) {
+      loginPageButton.addEventListener("click", () => {
+        window.location.href = "login.html";
+      });
+    }
+  }
+
+  // Initialize the login page
+  if (currentPage.endsWith("login.html")) {
+    console.log("Login page initialized.");
+
+    const loginForm = document.getElementById("login-form");
+    if (loginForm) {
+      loginForm.addEventListener("submit", loginUser);
+    } else {
+      console.error("Login form not found!");
+    }
+  }
+
+  // Initialize the register page
+  if (currentPage.endsWith("register.html")) {
+    console.log("Register page initialized.");
+
+    const registerForm = document.getElementById("register-form");
+    if (registerForm) {
+      registerForm.addEventListener("submit", registerUser);
+    } else {
+      console.error("Register form not found!");
+    }
+  }
+
+  // Initialize the dashboard
+  if (currentPage.endsWith("dashboard.html")) {
+    console.log("Dashboard initialized.");
+    // Include dashboard-specific initialization if needed
+  }
+
+  // Initialize the profile page
+  if (currentPage.endsWith("profile.html")) {
+    console.log("Profile page initialized.");
+    // Include profile-specific initialization if needed
+  }
+});

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile - Steady Steps</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <script src="scripts/utils.js" defer></script>
+  </head>
+  <body>
+    <!-- Navigation (optional) -->
+    <nav>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="profile.html" class="active">Profile</a>
+      <a href="logout.html">Logout</a>
+    </nav>
+
+    <!-- Profile Section -->
+    <main>
+      <div id="loading-screen" class="hidden">
+        <div class="spinner"></div>
+        <p id="loading-message">Loading...</p>
+      </div>
+      <section id="profile">
+        <h1>Your Profile</h1>
+        <p>Welcome, <span id="user-name">User</span>!</p>
+
+        <form id="update-profile-form">
+          <div>
+            <label for="profile-name">Name</label>
+            <input
+              type="text"
+              id="profile-name"
+              placeholder="Your Name"
+              required
+            />
+          </div>
+          <div>
+            <label for="profile-email">Email</label>
+            <input
+              type="email"
+              id="profile-email"
+              placeholder="Your Email"
+              required
+            />
+          </div>
+          <div>
+            <label for="profile-password">Password</label>
+            <input
+              type="password"
+              id="profile-password"
+              placeholder="New Password"
+            />
+          </div>
+          <button type="submit">Update Profile</button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="scripts/config.js" defer></script>
+    <script type="module" src="scripts/auth.js"></script>
+    <script src="scripts/darkmode.js" defer></script>
+    <script src="scripts/profile.js" defer></script>
+  </body>
+</html>
