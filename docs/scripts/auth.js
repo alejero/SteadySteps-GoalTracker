@@ -26,11 +26,22 @@ export function getToken() {
 }
 
 export function logoutUser() {
+  console.log("Logging out user...");
   localStorage.removeItem("jwtToken");
   sessionStorage.removeItem("jwtToken");
   localStorage.removeItem("userName");
   alert("You have been logged out.");
   window.location.href = "login.html"; // Redirect to login page
+}
+
+export function setupLogoutListener(buttonId = "logout-button") {
+  const logoutButton = document.getElementById(buttonId);
+  if (logoutButton) {
+    console.log(`Attaching logout listener to button with ID: ${buttonId}`);
+    logoutButton.addEventListener("click", logoutUser);
+  } else {
+    console.error(`Logout button with ID "${buttonId}" not found.`);
+  }
 }
 
 // Start user session

@@ -2,6 +2,7 @@ import { API_BASE_URL } from "./config.js";
 import {
   initializeSession,
   getToken,
+  setupLogoutListener,
   resetLogoutTimer,
   initializeInactivityListener,
 } from "./auth.js";
@@ -324,6 +325,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.warn("Session invalid. Redirecting to login.");
       return; // Stop further execution if session is invalid
     }
+
+    // Step 1.1: Attach logout listener
+    setupLogoutListener(); // Attach logout listener to the button
 
     // Step 2: Fetch and render tasks
     console.log("Fetching tasks...");

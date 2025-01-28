@@ -3,64 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Profile - Steady Steps</title>
-    <link rel="stylesheet" href="styles/styles.css" />
-    <script src="scripts/utils.js" defer></script>
+    <title>Profile</title>
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/profile.css" />
   </head>
   <body>
-    <!-- Navigation (optional) -->
-    <nav>
-      <a href="dashboard.html">Dashboard</a>
-      <a href="profile.html" class="active">Profile</a>
-      <a href="logout.html">Logout</a>
-    </nav>
+    <header>
+      <nav>
+        <div class="nav-left">
+          <h1>Your Profile</h1>
+        </div>
+        <div class="nav-right">
+          <button id="logout-button" class="button">Logout</button>
+        </div>
+      </nav>
+    </header>
 
-    <!-- Profile Section -->
-    <main>
-      <div id="loading-screen" class="hidden">
-        <div class="spinner"></div>
-        <p id="loading-message">Loading...</p>
-      </div>
-      <section id="profile">
-        <h1>Your Profile</h1>
-        <p>Welcome, <span id="user-name">User</span>!</p>
-
-        <form id="update-profile-form">
-          <div>
-            <label for="profile-name">Name</label>
-            <input
-              type="text"
-              id="profile-name"
-              placeholder="Your Name"
-              required
-            />
+    <main class="profile-container">
+      <div class="profile-card">
+        <h2>Welcome, <span id="profile-name">User</span>!</h2>
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="Enter your email" />
           </div>
-          <div>
-            <label for="profile-email">Email</label>
-            <input
-              type="email"
-              id="profile-email"
-              placeholder="Your Email"
-              required
-            />
+          <div class="form-group">
+            <label for="theme">Theme</label>
+            <select id="theme">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
           </div>
-          <div>
-            <label for="profile-password">Password</label>
-            <input
-              type="password"
-              id="profile-password"
-              placeholder="New Password"
-            />
-          </div>
-          <button type="submit">Update Profile</button>
+          <button type="button" id="save-profile" class="button">
+            Save Changes
+          </button>
         </form>
-      </section>
+      </div>
     </main>
 
-    <!-- Scripts -->
-    <script src="scripts/config.js" defer></script>
     <script type="module" src="scripts/auth.js"></script>
-    <script src="scripts/darkmode.js" defer></script>
     <script src="scripts/profile.js" defer></script>
   </body>
 </html>

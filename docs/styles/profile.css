@@ -1,0 +1,26 @@
+/* Profile Section */
+#profile-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: var(--padding);
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#profile-form label {
+  display: block;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+#profile-form input,
+#profile-form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid var(--secondary-text-color);
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

@@ -1,0 +1,17 @@
+.auth-form {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: var(--padding);
+  background-color: var(--background-container-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid var(--secondary-text-color);
+  border-radius: var(--border-radius);
+  background-color: var(--background-container-color);
+}

@@ -8,7 +8,10 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="stylesheet" href="styles/global.css" />
+    <link rel="stylesheet" href="styles/components.css" />
+    <link rel="stylesheet" href="styles/layout.css" />
+    <link rel="stylesheet" href="styles/dashboard.css" />
     <script src="scripts/utils.js" defer></script>
   </head>
   <body>
@@ -22,6 +25,14 @@
       <div class="spinner"></div>
       <p id="loading-message">Loading...</p>
     </div>
+
+    <nav id="navbar">
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><button id="logout-button">Logout</button></li>
+      </ul>
+    </nav>
 
     <div class="container">
       <header>

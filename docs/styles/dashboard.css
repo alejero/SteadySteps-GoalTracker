@@ -1,0 +1,28 @@
+/* Dashboard Section */
+#welcome-card {
+    padding: var(--padding);
+    background-color: var(--background-container-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  #task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: var(--background-container-color);
+    padding: var(--padding);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .task {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: var(--task-background-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
