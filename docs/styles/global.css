@@ -68,19 +68,6 @@ h2 {
   padding: var(--padding);
 }
 
-/* Loading screen */
-#loading-screen {
-  transition: opacity 0.3s ease-in-out;
-}
-#loading-screen:not(.hidden) {
-  opacity: 1;
-  pointer-events: auto;
-}
-#loading-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
 /* Global Dark Mode Toggle (Floating Button) */
 .dark-mode-toggle {
   position: fixed;
