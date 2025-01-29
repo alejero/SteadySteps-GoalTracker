@@ -4,12 +4,25 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/components.css" />
     <link rel="stylesheet" href="styles/layout.css" />
     <link rel="stylesheet" href="styles/profile.css" />
   </head>
   <body>
+    <!-- Dark Mode Toggle Button -->
+    <button
+      class="dark-mode-toggle"
+      id="dark-mode-toggle"
+      aria-label="Toggle Dark Mode"
+    >
+      <i id="toggle-icon" class="fas fa-moon"></i>
+    </button>
+
     <header>
       <nav>
         <div class="nav-left">
@@ -43,6 +56,7 @@
       </div>
     </main>
 
+    <script src="scripts/darkmode.js"></script>
     <script type="module" src="scripts/auth.js"></script>
     <script src="scripts/profile.js" defer></script>
   </body>

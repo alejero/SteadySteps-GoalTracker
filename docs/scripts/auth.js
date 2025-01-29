@@ -21,7 +21,7 @@ export function isTokenExpired(token) {
 export function getToken() {
   const token =
     localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
-  console.log("Retrieved token:", token);
+  // console.log("Retrieved token:", token);  // Uncomment for debugging
   return token;
 }
 

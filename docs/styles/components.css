@@ -1,121 +1,113 @@
 /* Buttons */
 button {
-    padding: 12px 20px;
-    font-size: var(--font-size);
-    font-weight: bold;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+  padding: 12px 20px;
+  font-size: var(--font-size);
+  font-weight: bold;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Primary Button */
+.button-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.button-primary:hover {
+  background-color: var(--primary-hover-color);
+}
+
+/* Secondary Button */
+.button-secondary {
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  background-color: transparent;
+}
+
+.button-secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Forms */
+/* Adjusted global form styles to prevent conflicts */
+form {
+  background-color: var(--background-container-color);
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+}
+
+/* Scoped styles for forms outside of auth pages */
+.general-form {
+  background-color: var(--background-container-color);
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation */
+nav {
+  background-color: var(--background-container-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--secondary-text-color);
+}
+
+nav a {
+  color: var(--text-color);
+  text-decoration: none;
+  margin-right: 20px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: var(--primary-color);
+}
+
+/* Loading Screen */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease-in-out;
+}
+
+#loading-screen:not(.hidden) {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 6px solid #ddd;
+  border-top: 6px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  button:hover {
-    transform: scale(1.05);
+  to {
+    transform: rotate(360deg);
   }
-  
-  /* Primary Button */
-  .button-primary {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  .button-primary:hover {
-    background-color: var(--primary-hover-color);
-  }
-  
-  /* Secondary Button */
-  .button-secondary {
-    border: 2px solid var(--primary-color);
-    color: var(--primary-color);
-    background-color: transparent;
-  }
-  
-  .button-secondary:hover {
-    background-color: var(--primary-color);
-    color: white;
-  }
-  
-  /* Forms */
-  form {
-    background-color: var(--background-container-color);
-    padding: var(--padding);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  form label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-  }
-  
-  form input, form select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: var(--margin);
-    border: 1px solid var(--secondary-text-color);
-    border-radius: var(--border-radius);
-    background-color: var(--background-color);
-    color: var(--text-color);
-  }
-  
-  /* Navigation */
-  nav {
-    background-color: var(--background-container-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--secondary-text-color);
-  }
-  
-  nav a {
-    color: var(--text-color);
-    text-decoration: none;
-    margin-right: 20px;
-    font-weight: bold;
-  }
-  
-  nav a:hover {
-    color: var(--primary-color);
-  }
-  
-  /* Loading Screen */
-  #loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  #loading-screen:not(.hidden) {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  
-  .spinner {
-    width: 50px;
-    height: 50px;
-    border: 6px solid #ddd;
-    border-top: 6px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
+}

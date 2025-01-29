@@ -1,36 +1,22 @@
 // Dark Mode Toggle Logic
-const darkModeToggle = document.getElementById("dark-mode-toggle");
-const toggleIcon = document.getElementById("toggle-icon");
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("Dark mode script loaded...");
 
-// Initialize dark mode based on saved preference
-const savedTheme = localStorage.getItem("theme");
-if (savedTheme) {
-  document.documentElement.classList.toggle("dark-mode", savedTheme === "dark");
-  toggleIcon.className = savedTheme === "dark" ? "fas fa-sun" : "fas fa-moon";
-  updateTaskStyles(); // Ensure tasks reflect the current theme
-}
+  const toggleButton = document.getElementById("dark-mode-toggle");
+  if (!toggleButton) {
+    console.error("Dark mode toggle button NOT FOUND in DOM.");
+    return;
+  }
 
-// Add event listener to toggle dark mode
-darkModeToggle.addEventListener("click", () => {
-  const isDarkMode = document.documentElement.classList.toggle("dark-mode");
-  toggleIcon.className = isDarkMode ? "fas fa-sun" : "fas fa-moon";
-
-  // Save the user's preference
-  localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-
-  // Update tasks dynamically to reflect the new theme
-  updateTaskStyles();
-});
-
-// Update task styles dynamically
-function updateTaskStyles() {
-  const tasks = document.querySelectorAll(".task");
-  const root = document.documentElement;
-
-  tasks.forEach((task) => {
-    task.style.backgroundColor = getComputedStyle(root).getPropertyValue(
-      "--task-background-color"
-    );
-    task.style.color = getComputedStyle(root).getPropertyValue("--text-color");
+  toggleButton.addEventListener("click", (event) => {
+    console.log("Dark mode toggle clicked!");
+    document.body.classList.toggle("dark-mode");
   });
-}
+
+  // Also listen for clicks on the icon itself
+  document.getElementById("toggle-icon")?.addEventListener("click", (event) => {
+    console.log("Icon clicked, triggering dark mode...");
+    event.stopPropagation(); // Prevent double event firing
+    document.body.classList.toggle("dark-mode");
+  });
+});
