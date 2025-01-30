@@ -1,35 +1,37 @@
-/* Navbar container adjustments for dashboard */
+/* Navbar Container */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 30px;
+  padding: 0 20px;
+  height: 60px;
   background-color: var(--background-container-color);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Navbar logo/brand */
+/* Brand (Steady Steps) */
 .navbar .brand {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: var(--primary-color);
   text-decoration: none;
+  color: var(--primary-color);
 }
 
-/* Navbar menu */
+/* Navigation Menu */
 .navbar .menu {
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
+/* Links */
 .navbar .menu a {
+  text-decoration: none;
   font-size: 1rem;
   font-weight: 500;
-  text-decoration: none;
   color: var(--text-color);
   transition: color 0.3s ease;
 }
@@ -38,14 +40,9 @@
   color: var(--primary-hover-color);
 }
 
-.navbar .menu a.active {
-  color: var(--primary-color);
-  border-bottom: 2px solid var(--primary-color);
-}
-
-/* Logout button for dashboard */
+/* Logout Button */
 .navbar .logout-button {
-  padding: 10px 20px;
+  padding: 8px 15px;
   font-size: 0.9rem;
   font-weight: bold;
   background-color: var(--danger-color);
@@ -61,29 +58,56 @@
   transform: scale(1.05);
 }
 
-/* Responsive Design */
+/* 🌟 Responsive Navbar - Mobile & Tablet 🌟 */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0 15px;
+  }
+
+  /* Hide menu by default */
   .navbar .menu {
     display: none;
-  }
-
-  .navbar .menu-toggle {
-    display: block;
-    font-size: 1.5rem;
-    color: var(--text-color);
-    cursor: pointer;
-  }
-
-  .navbar.expanded .menu {
-    display: flex;
     flex-direction: column;
     position: absolute;
     top: 60px;
-    right: 20px;
+    right: 15px;
+    width: 200px;
     background-color: var(--background-container-color);
-    padding: 15px;
     border-radius: var(--border-radius);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    padding: 15px;
     gap: 15px;
+  }
+
+  /* Show menu when expanded */
+  .navbar.expanded .menu {
+    display: flex;
+  }
+
+  /* Hamburger Icon */
+  .navbar .menu-toggle {
+    display: block;
+    font-size: 1.8rem;
+    color: var(--text-color);
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+}
+
+/* Restore layout for large screens */
+@media (min-width: 769px) {
+  .navbar .menu {
+    display: flex !important;
+    position: static;
+    background: none;
+    box-shadow: none;
+    flex-direction: row;
+    width: auto;
+    padding: 0;
+  }
+
+  .navbar .menu-toggle {
+    display: none;
   }
 }

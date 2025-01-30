@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - Steady Steps</title>
+    <title>Steady Steps - Login</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -30,13 +30,12 @@
       <p id="loading-message">Loading...</p>
     </div>
 
-    <!-- Navbar -->
+    <!-- Navigation -->
     <nav class="navbar">
-      <a href="#" class="brand">Steady Steps</a>
+      <a id="home-link" class="brand" href="#">Steady Steps</a>
       <div class="menu">
-        <!-- <span id="task-count"><strong>0</strong> tasks remaining</span>
-        <a href="#profile">Profile</a>
-        <button class="logout-button">Logout</button> -->
+        <a class="profile-link" href="profile.html">Profile</a>
+        <button id="logout-button">Logout</button>
       </div>
     </nav>
 
@@ -78,6 +77,7 @@
     </div>
 
     <script src="scripts/darkmode.js"></script>
+    <script type="module" src="scripts/navbar.js"></script>
     <script type="module" src="scripts/auth.js"></script>
     <script type="module" src="scripts/app.js"></script>
   </body>
