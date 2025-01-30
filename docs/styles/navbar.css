@@ -1,4 +1,4 @@
-/* Navbar container */
+/* Navbar container adjustments for dashboard */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -23,7 +23,7 @@
 /* Navbar menu */
 .navbar .menu {
   display: flex;
-  gap: 25px;
+  gap: 20px;
 }
 
 .navbar .menu a {
@@ -43,7 +43,7 @@
   border-bottom: 2px solid var(--primary-color);
 }
 
-/* Logout Button */
+/* Logout button for dashboard */
 .navbar .logout-button {
   padding: 10px 20px;
   font-size: 0.9rem;

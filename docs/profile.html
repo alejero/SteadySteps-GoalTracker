@@ -23,16 +23,21 @@
       <i id="toggle-icon" class="fas fa-moon"></i>
     </button>
 
-    <header>
-      <nav>
-        <div class="nav-left">
-          <h1>Your Profile</h1>
-        </div>
-        <div class="nav-right">
-          <button id="logout-button" class="button">Logout</button>
-        </div>
-      </nav>
-    </header>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="hidden">
+      <div class="spinner"></div>
+      <p id="loading-message">Loading...</p>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="#" class="brand">Steady Steps</a>
+      <div class="menu">
+        <a href="#tasks" class="active">Tasks</a>
+        <a href="#profile">Profile</a>
+        <button id="logout-button" class="logout-button">Logout</button>
+      </div>
+    </nav>
 
     <main class="profile-container">
       <div class="profile-card">

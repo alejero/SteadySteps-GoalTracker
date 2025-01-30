@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Steady Steps - Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <link rel="stylesheet" href="styles/global.css" />
     <link rel="stylesheet" href="styles/components.css" />
     <link rel="stylesheet" href="styles/dashboard.css" />
     <script src="scripts/utils.js" defer></script>
   </head>
   <body>
-    <!-- Dark Mode Toggle Button -->
+    <!-- Dark Mode Toggle -->
     <button
       class="dark-mode-toggle"
       id="dark-mode-toggle"
@@ -26,36 +29,46 @@
       <p id="loading-message">Loading...</p>
     </div>
 
-    <nav id="navbar">
-      <ul>
-        <li><a href="dashboard.html">Dashboard</a></li>
-        <li><a href="profile.html">Profile</a></li>
-        <li><button id="logout-button">Logout</button></li>
-      </ul>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="#" class="brand">Steady Steps</a>
+      <div class="menu">
+        <span id="task-count"><strong>0</strong> tasks remaining</span>
+        <a href="#profile">Profile</a>
+        <button class="logout-button">Logout</button>
+      </div>
     </nav>
 
-    <div class="container">
-      <header>
-        <div id="welcome-card">
-          <h2>Welcome back, <span id="user-name"></span>!</h2>
-          <p>
-            You have <span id="active-tasks-count">0</span> active tasks and
-            <span id="completed-tasks-count">0</span> completed tasks.
-          </p>
+    <!-- Dashboard Container -->
+    <div id="dashboard" class="container">
+      <!-- Task Management Section -->
+      <section id="task-section">
+        <h2>Your Tasks</h2>
+
+        <!-- Add Task Input (Always Visible) -->
+        <div id="add-task-section">
+          <form id="add-task-form">
+            <input
+              type="text"
+              id="task-title"
+              placeholder="Enter your task..."
+              aria-label="Task Title"
+              required
+            />
+            <button type="submit" id="add-task-button">Add</button>
+          </form>
         </div>
-      </header>
-      <main>
-        <!-- Task container to display tasks dynamically -->
+
+        <!-- Task Container -->
         <div id="task-wrapper">
-          <!-- Task Container -->
           <div id="task-container" class="hidden"></div>
 
-          <!-- Empty State Container -->
+          <!-- Empty State Message -->
           <div id="empty-state-container" class="visible">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="150"
-              height="150"
+              width="100"
+              height="100"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -67,26 +80,13 @@
                 d="M9 12l2 2 4-4"
               ></path>
             </svg>
-            <p>No tasks yet. Add some to get started!</p>
+            <p>No tasks yet. Start by adding one above!</p>
           </div>
         </div>
-
-        <div id="add-task-section" class="hidden">
-          <form id="add-task-form">
-            <input
-              type="text"
-              id="task-title"
-              placeholder="Enter your task..."
-            />
-            <button type="submit">Add Task</button>
-          </form>
-        </div>
-
-        <button id="toggle-add-task">+ Add New Task</button>
-      </main>
+      </section>
     </div>
+
     <script>
-      // Example: Hiding the loading screen after the initial load
       document.addEventListener("DOMContentLoaded", () => {
         hideLoading();
       });

@@ -174,9 +174,15 @@ async function deleteTask(taskId) {
       method: "DELETE",
     });
 
-    // Refresh tasks and update UI
+    // Fetch updated tasks and update UI
     const tasks = await fetchTasks();
-    updateWelcomeCard(tasks); // Update welcome stats
+
+    // Update the welcome card stats *only if elements exist*
+    if (document.getElementById("welcome-card")) {
+      updateWelcomeCard(tasks);
+    } else {
+      console.warn("Welcome card not found, skipping update.");
+    }
   } catch (error) {
     console.error("Error deleting task:", error.message);
     alert("Failed to delete task. Please try again.");
@@ -223,45 +229,47 @@ function deleteTaskFromDOM(taskElement) {
 }
 
 // Display a welcome message
-function updateWelcomeCard(tasks) {
+function updateWelcomeCard(tasks = []) {
+  const userNameElement = document.getElementById("user-name");
+  const activeTasksElement = document.getElementById("active-tasks-count");
+  const completedTasksElement = document.getElementById(
+    "completed-tasks-count"
+  );
+
+  if (!userNameElement || !activeTasksElement || !completedTasksElement) {
+    console.error("Welcome card elements not found! Skipping update.");
+    return; // Exit function early if elements are missing
+  }
+
   const userName = localStorage.getItem("userName") || "User";
   const activeTasksCount = tasks.filter((task) => !task.completed).length;
   const completedTasksCount = tasks.filter((task) => task.completed).length;
 
-  const welcomeCard = document.getElementById("welcome-card");
-  if (welcomeCard) {
-    document.getElementById("user-name").textContent = userName;
-    document.getElementById("active-tasks-count").textContent =
-      activeTasksCount;
-    document.getElementById("completed-tasks-count").textContent =
-      completedTasksCount;
-  } else {
-    console.error("Welcome card element not found!");
-  }
+  userNameElement.textContent = userName;
+  activeTasksElement.textContent = activeTasksCount;
+  completedTasksElement.textContent = completedTasksCount;
 }
 
 // Setup Add Task section
-
 function setupAddTaskSection() {
   const toggleButton = document.getElementById("toggle-add-task");
-  const addTaskSection = document.getElementById("add-task-section");
   const addTaskForm = document.getElementById("add-task-form");
 
-  if (!toggleButton || !addTaskSection || !addTaskForm) {
+  if (!toggleButton || !addTaskForm) {
     console.error("Required elements for Add Task section not found!");
     return;
   }
 
   toggleButton.addEventListener("click", () => {
-    const isVisible = addTaskSection.classList.contains("visible");
+    const isVisible = addTaskForm.classList.contains("visible");
 
     if (isVisible) {
-      addTaskSection.classList.remove("visible");
-      addTaskSection.classList.add("hidden");
+      addTaskForm.classList.remove("visible");
+      addTaskForm.classList.add("hidden");
       toggleButton.textContent = "+ Add New Task";
     } else {
-      addTaskSection.classList.remove("hidden");
-      addTaskSection.classList.add("visible");
+      addTaskForm.classList.remove("hidden");
+      addTaskForm.classList.add("visible");
       toggleButton.textContent = "Close Add Task";
     }
   });
