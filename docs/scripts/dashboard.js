@@ -51,6 +51,7 @@ async function fetchTasks() {
 }
 
 // Render tasks in the DOM
+// Render tasks in the DOM
 function renderTasks(tasks) {
   const taskContainer = document.getElementById("task-container");
   const emptyStateContainer = document.getElementById("empty-state-container");
@@ -60,52 +61,56 @@ function renderTasks(tasks) {
     return;
   }
 
-  // Clear the task container
+  // Clear existing tasks
   taskContainer.innerHTML = "";
 
-  if (!Array.isArray(tasks) || tasks.length === 0) {
-    // If no tasks, show the empty-state-container and hide the task-container
+  if (!tasks || tasks.length === 0) {
+    // Show empty state
     taskContainer.style.display = "none";
-    emptyStateContainer.style.display = "flex"; // Ensure it's visible
+    emptyStateContainer.style.display = "flex";
     return;
   }
 
-  // If tasks exist, show the task-container and hide the empty-state-container
-  taskContainer.style.display = "flex"; // Ensure it's visible
+  // Show tasks
+  taskContainer.style.display = "block";
   emptyStateContainer.style.display = "none";
 
-  // Populate the task container
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
-    taskElement.className = "task"; // This ensures the task gets the correct styles
+    taskElement.className = `task ${task.completed ? "completed" : ""}`;
     taskElement.innerHTML = `
       <div class="task-content">
-        <input type="checkbox" class="task-complete" ${
+        <input type="checkbox" class="task-checkbox" ${
           task.completed ? "checked" : ""
-        } />
-        <span class="task-title ${task.completed ? "completed" : ""}">
-          ${task.title}
-        </span>
+        } data-task-id="${task._id}" />
+        <span class="task-title">${task.title}</span>
       </div>
       <div class="task-actions">
-        <button class="edit-task" aria-label="Edit Task">✏️</button>
-        <button class="delete-task" aria-label="Delete Task">🗑️</button>
+        <button class="edit-task" data-task-id="${task._id}">✏️</button>
+        <button class="delete-task" data-task-id="${task._id}">🗑️</button>
       </div>
     `;
 
     // Attach event listeners
     taskElement
-      .querySelector(".task-complete")
-      .addEventListener("change", () => toggleTaskCompletion(task._id));
+      .querySelector(".task-checkbox")
+      .addEventListener("change", (e) =>
+        toggleTaskCompletion(e.target.dataset.taskId, e.target.checked)
+      );
+
     taskElement
       .querySelector(".edit-task")
       .addEventListener("click", () => editTask(task));
+
     taskElement
       .querySelector(".delete-task")
       .addEventListener("click", () => deleteTask(task._id));
 
     taskContainer.appendChild(taskElement);
   });
+
+  // Update Welcome Card progress
+  updateWelcomeCard(tasks);
 }
 
 // Add a new task
@@ -197,13 +202,16 @@ function highlightNewTask(taskElement) {
 }
 
 // Toggle task completion
-async function toggleTaskCompletion(taskId) {
+async function toggleTaskCompletion(taskId, isCompleted) {
   try {
     await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
       method: "PATCH",
-      body: JSON.stringify({ completed: true }), // Toggle the completion state
+      body: JSON.stringify({ completed: isCompleted }),
     });
-    await fetchTasks(); // Refresh tasks after toggling
+
+    // Fetch updated tasks
+    const tasks = await fetchTasks();
+    updateWelcomeCard(tasks);
   } catch (error) {
     console.error("Error toggling task completion:", error.message);
   }
@@ -251,31 +259,31 @@ function updateWelcomeCard(tasks = []) {
 }
 
 // Setup Add Task section
-function setupAddTaskSection() {
-  const toggleButton = document.getElementById("toggle-add-task");
-  const addTaskForm = document.getElementById("add-task-form");
+// function setupAddTaskSection() {
+//   const toggleButton = document.getElementById("toggle-add-task");
+//   const addTaskForm = document.getElementById("add-task-form");
 
-  if (!toggleButton || !addTaskForm) {
-    console.error("Required elements for Add Task section not found!");
-    return;
-  }
+//   if (!toggleButton || !addTaskForm) {
+//     console.error("Required elements for Add Task section not found!");
+//     return;
+//   }
 
-  toggleButton.addEventListener("click", () => {
-    const isVisible = addTaskForm.classList.contains("visible");
+//   toggleButton.addEventListener("click", () => {
+//     const isVisible = addTaskForm.classList.contains("visible");
 
-    if (isVisible) {
-      addTaskForm.classList.remove("visible");
-      addTaskForm.classList.add("hidden");
-      toggleButton.textContent = "+ Add New Task";
-    } else {
-      addTaskForm.classList.remove("hidden");
-      addTaskForm.classList.add("visible");
-      toggleButton.textContent = "Close Add Task";
-    }
-  });
+//     if (isVisible) {
+//       addTaskForm.classList.remove("visible");
+//       addTaskForm.classList.add("hidden");
+//       toggleButton.textContent = "+ Add New Task";
+//     } else {
+//       addTaskForm.classList.remove("hidden");
+//       addTaskForm.classList.add("visible");
+//       toggleButton.textContent = "Close Add Task";
+//     }
+//   });
 
-  addTaskForm.addEventListener("submit", addTask);
-}
+//   addTaskForm.addEventListener("submit", addTask);
+// }
 
 // Add Task Handler
 async function handleAddTask(event) {
@@ -343,8 +351,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateWelcomeCard(tasks); // Update the welcome card stats
 
     // Step 3: Set up the "Add Task" section
-    console.log("Setting up Add Task section...");
-    setupAddTaskSection();
+    // console.log("Setting up Add Task section...");
+    // setupAddTaskSection();
 
     // Step 4: Initialize inactivity logout
     console.log("Initializing inactivity logout...");
