@@ -51,7 +51,6 @@ async function fetchTasks() {
 }
 
 // Render tasks in the DOM
-// Render tasks in the DOM
 function renderTasks(tasks) {
   const taskContainer = document.getElementById("task-container");
   const emptyStateContainer = document.getElementById("empty-state-container");
@@ -204,16 +203,26 @@ function highlightNewTask(taskElement) {
 // Toggle task completion
 async function toggleTaskCompletion(taskId, isCompleted) {
   try {
-    await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
       method: "PATCH",
       body: JSON.stringify({ completed: isCompleted }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
-    // Fetch updated tasks
-    const tasks = await fetchTasks();
-    updateWelcomeCard(tasks);
+    // Log response status and text
+    console.log("Response status:", response.status);
+    const responseText = await response.text();
+    console.log("Response text:", responseText);
+
+    // Attempt to parse JSON
+    const data = JSON.parse(responseText);
+    console.log("Parsed JSON:", data);
+
+    return data;
   } catch (error) {
-    console.error("Error toggling task completion:", error.message);
+    console.error("Error toggling task completion:", error);
   }
 }
 

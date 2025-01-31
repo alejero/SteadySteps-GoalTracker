@@ -15,9 +15,13 @@ app.use(bodyParser.json());
 // CORS setup
 app.use(cors({
     origin: ["http://localhost:5500", "https://alejero.github.io"], // Allow only these domains to make requests
-    methods: ["GET", "POST", "PATCH", "PUT", "DELETE"], // Allowed HTTP methods
+    methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"], // Allowed HTTP methods
     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    credentials: true, // Allow sending cookies & authorization headers
   }));
+
+// Explicitly allow OPTIONS for preflight requests
+app.options("*", cors()); 
 
 // Routes
 app.use('/api/auth', authRoutes);
