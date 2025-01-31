@@ -205,10 +205,8 @@ async function toggleTaskCompletion(taskId, isCompleted) {
   try {
     const response = await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
       method: "PATCH",
+      headers: { "Content-Type": "application/json",},
       body: JSON.stringify({ completed: isCompleted }),
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     // Log response status and text

@@ -76,6 +76,29 @@ router.put("/:id", protect, async (req, res) => {
   }
 });
 
+// Update task completion status
+router.patch("/:id", protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { completed } = req.body;
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { completed },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ error: "Task not found" });
+    }
+
+    res.json(updatedTask);
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // (Delete) Delete a task
 router.delete("/:id", protect, async (req, res) => {
   try {
