@@ -323,31 +323,6 @@ function deleteTaskFromDOM(taskElement) {
   }, 300); // Match CSS animation duration
 }
 
-// Collapsible Tasks Sections
-// function setupCollapsibleSections() {
-//   const activeTasksSection = document.getElementById("active-tasks");
-//   const completedTasksSection = document.getElementById("completed-tasks");
-
-//   if (activeTasksSection && completedTasksSection) {
-//     [activeTasksSection, completedTasksSection].forEach((section) => {
-//       const header = section.querySelector(".task-section-header");
-
-//       if (header) {
-//         header.addEventListener("click", () => {
-//           section.classList.toggle("collapsed");
-
-//           // Update the chevron icon rotation
-//           const icon = header.querySelector("i");
-//           if (icon) {
-//             icon.classList.toggle("fa-chevron-down");
-//             icon.classList.toggle("fa-chevron-up");
-//           }
-//         });
-//       }
-//     });
-//   }
-// }
-
 // Ensure collapsing behavior works correctly
 function setupTaskCollapsing() {
   const taskSections = document.querySelectorAll(".task-section");
@@ -362,25 +337,84 @@ function setupTaskCollapsing() {
 }
 
 // Display a welcome message
-function updateWelcomeCard(tasks = []) {
-  const userNameElement = document.getElementById("user-name");
-  const activeTasksElement = document.getElementById("active-tasks-count");
-  const completedTasksElement = document.getElementById(
-    "completed-tasks-count"
-  );
+let retryCount = 0;
+const MAX_RETRIES = 5;
 
-  if (!userNameElement || !activeTasksElement || !completedTasksElement) {
-    console.error("Welcome card elements not found! Skipping update.");
-    return; // Exit function early if elements are missing
+function updateWelcomeCard(tasks = []) {
+  console.log("Tasks received in updateWelcomeCard:", tasks);
+
+  // Get all UI elements
+  const elements = {
+    userNameEl: document.getElementById("user-name"),
+    progressPercentEl: document.getElementById("progress-percentage"),
+    completedTasksEl: document.getElementById("completed-tasks-count"),
+    totalTasksEl: document.getElementById("total-tasks-count"),
+    motivationalTextEl: document.getElementById("motivational-text"),
+  };
+
+  // Identify missing elements
+  const missingElements = Object.entries(elements)
+    .filter(([key, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingElements.length > 0) {
+    console.warn(
+      `⚠️ Missing UI Elements: ${missingElements.join(", ")} (Attempt ${
+        retryCount + 1
+      }/${MAX_RETRIES})`
+    );
+
+    if (retryCount < MAX_RETRIES) {
+      retryCount++;
+      setTimeout(() => updateWelcomeCard(tasks), 200);
+      return;
+    } else {
+      console.error(
+        "❌ Failed to update welcome card after multiple attempts. Ensure HTML elements exist."
+      );
+      return;
+    }
   }
 
-  const userName = localStorage.getItem("userName") || "User";
-  const activeTasksCount = tasks.filter((task) => !task.completed).length;
-  const completedTasksCount = tasks.filter((task) => task.completed).length;
+  // Reset retry count
+  retryCount = 0;
 
-  userNameElement.textContent = userName;
-  activeTasksElement.textContent = activeTasksCount;
-  completedTasksElement.textContent = completedTasksCount;
+  // Extract valid elements
+  const {
+    userNameEl,
+    progressPercentEl,
+    completedTasksEl,
+    totalTasksEl,
+    motivationalTextEl,
+  } = elements;
+
+  // Update UI
+  const userName = localStorage.getItem("userName") || "User";
+  const activeTasks = tasks.filter((task) => !task.completed).length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
+  const totalTasks = activeTasks + completedTasks;
+  const progressPercent =
+    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  console.log(
+    `✅ Active: ${activeTasks}, Completed: ${completedTasks}, Total: ${totalTasks}, Progress: ${progressPercent}%`
+  );
+
+  userNameEl.textContent = userName;
+  progressPercentEl.textContent = `${progressPercent}%`;
+  completedTasksEl.textContent = completedTasks;
+  totalTasksEl.textContent = totalTasks;
+
+  // Update motivational text dynamically
+  if (progressPercent === 0) {
+    motivationalTextEl.textContent = "Let’s get some steps in today!";
+  } else if (progressPercent < 50) {
+    motivationalTextEl.textContent = "Great start! Keep it up! 🚀";
+  } else if (progressPercent < 100) {
+    motivationalTextEl.textContent = "Almost there! Finish strong! 💪";
+  } else {
+    motivationalTextEl.textContent = "You crushed it today! 🎉";
+  }
 }
 
 // Add Task Handler
