@@ -52,65 +52,69 @@ async function fetchTasks() {
 
 // Render tasks in the DOM
 function renderTasks(tasks) {
-  const taskContainer = document.getElementById("task-container");
-  const emptyStateContainer = document.getElementById("empty-state-container");
+  const activeTasksList = document.getElementById("active-tasks-list");
+  const completedTasksList = document.getElementById("completed-tasks-list");
 
-  if (!taskContainer || !emptyStateContainer) {
-    console.error("Task container or empty state container not found!");
+  // Ensure containers exist before modifying them
+  if (!activeTasksList || !completedTasksList) {
+    console.error("Task containers not found.");
     return;
   }
 
-  // Clear existing tasks
-  taskContainer.innerHTML = "";
+  // Clear existing task elements before re-rendering
+  activeTasksList.innerHTML = "";
+  completedTasksList.innerHTML = "";
 
-  if (!tasks || tasks.length === 0) {
-    // Show empty state
-    taskContainer.style.display = "none";
-    emptyStateContainer.style.display = "flex";
+  // Check if there are tasks
+  if (!tasks || !Array.isArray(tasks)) {
+    console.error("Invalid task data.");
     return;
   }
-
-  // Show tasks
-  taskContainer.style.display = "block";
-  emptyStateContainer.style.display = "none";
 
   tasks.forEach((task) => {
     const taskElement = document.createElement("div");
-    taskElement.className = `task ${task.completed ? "completed" : ""}`;
+    taskElement.classList.add("task");
+    taskElement.setAttribute("data-task-id", task._id);
+
     taskElement.innerHTML = `
       <div class="task-content">
-        <input type="checkbox" class="task-checkbox" ${
+        <input type="checkbox" class="task-complete" ${
           task.completed ? "checked" : ""
-        } data-task-id="${task._id}" />
-        <span class="task-title">${task.title}</span>
+        } />
+        <span class="task-title ${
+          task.completed ? "completed" : ""
+        }" contenteditable="true">
+          ${task.title}
+        </span>
       </div>
       <div class="task-actions">
-        <button class="edit-task" data-task-id="${task._id}">✏️</button>
-        <button class="delete-task" data-task-id="${task._id}">🗑️</button>
+        <button class="delete-task" aria-label="Delete Task">🗑️</button>
       </div>
     `;
 
-    // Attach event listeners
-    taskElement
-      .querySelector(".task-checkbox")
-      .addEventListener("change", (e) =>
-        toggleTaskCompletion(e.target.dataset.taskId, e.target.checked)
-      );
+    // Append task to the correct section
+    if (task.completed) {
+      completedTasksList.appendChild(taskElement);
+    } else {
+      activeTasksList.appendChild(taskElement);
+    }
 
+    // Add event listeners
     taskElement
-      .querySelector(".edit-task")
-      .addEventListener("click", () => editTask(task));
-
+      .querySelector(".task-complete")
+      .addEventListener("change", () => toggleTaskCompletion(task._id));
     taskElement
       .querySelector(".delete-task")
       .addEventListener("click", () => deleteTask(task._id));
-
-    taskContainer.appendChild(taskElement);
   });
-
-  // Update Welcome Card progress
-  updateWelcomeCard(tasks);
 }
+
+// Toggle Completed Task Section Visibility
+// document.getElementById("toggle-completed").addEventListener("click", () => {
+//   document
+//     .getElementById("completed-task-container")
+//     .classList.toggle("collapsed");
+// });
 
 // Add a new task
 async function addTask(event) {
@@ -163,6 +167,28 @@ async function editTask(task) {
   }
 }
 
+async function updateTaskTitle(taskId, newTitle) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ title: newTitle }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update task title.");
+    }
+
+    console.log("Task title updated successfully.");
+  } catch (error) {
+    console.error("Error updating task title:", error);
+    alert("Failed to update task title. Please try again.");
+  }
+}
+
 // Delete a task
 async function deleteTask(taskId) {
   if (!taskId) {
@@ -201,27 +227,81 @@ function highlightNewTask(taskElement) {
 }
 
 // Toggle task completion
-async function toggleTaskCompletion(taskId, isCompleted) {
+async function toggleTaskCompletion(taskId) {
   try {
+    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+
+    if (!taskElement) {
+      console.error("Task element not found in DOM");
+      return;
+    }
+
+    const isCompleted = taskElement.querySelector(".task-complete").checked;
+
+    console.log("Sending PATCH request with:", {
+      completed: isCompleted,
+    });
+
     const response = await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json",},
+      headers: { "Content-Type": "application/json" }, // ✅ Ensure proper headers
       body: JSON.stringify({ completed: isCompleted }),
     });
 
-    // Log response status and text
-    console.log("Response status:", response.status);
-    const responseText = await response.text();
-    console.log("Response text:", responseText);
+    console.log("Raw response from server:", response);
 
-    // Attempt to parse JSON
-    const data = JSON.parse(responseText);
-    console.log("Parsed JSON:", data);
+    const data = await response.json();
+    console.log("Task completion updated successfully:", data);
 
-    return data;
+    if (!data || !data._id) {
+      throw new Error("Failed to update task completion");
+    }
+
+    // Refresh the UI
+    const tasks = await fetchTasks();
+    renderTasks(tasks);
   } catch (error) {
-    console.error("Error toggling task completion:", error);
+    console.error("Error toggling task completion:", error.message);
+    alert("Failed to update task completion.");
   }
+}
+
+// Move a task element in the DOM (For immediate UI updates without fetching the entire task list from the server)
+function moveTaskInUI(taskId, completed) {
+  const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+  if (!taskElement) {
+    console.error(`Task element with ID ${taskId} not found`);
+    return;
+  }
+
+  // Find the correct containers
+  const activeTasksContainer = document.getElementById("active-tasks");
+  const completedTasksContainer = document.getElementById("completed-tasks");
+
+  // Ensure containers exist
+  if (!activeTasksContainer || !completedTasksContainer) {
+    console.error("Task containers not found");
+    return;
+  }
+
+  console.log(
+    `Moving Task ${taskId} to ${completed ? "Completed Tasks" : "Active Tasks"}`
+  );
+
+  // Remove from current location
+  taskElement.remove();
+
+  // Move task to the correct section
+  if (completed) {
+    taskElement.classList.add("completed-task");
+    completedTasksContainer.appendChild(taskElement);
+  } else {
+    taskElement.classList.remove("completed-task");
+    activeTasksContainer.appendChild(taskElement);
+  }
+
+  // Update the checkbox state
+  taskElement.querySelector(".task-complete").checked = completed;
 }
 
 // Remove a task element from the DOM (For task deletion to immediately reflect in the UI without fetching the entire task list from the server)
@@ -241,6 +321,44 @@ function deleteTaskFromDOM(taskElement) {
       taskContainer.innerHTML = "<p>No tasks yet. Add some to get started!</p>";
     }
   }, 300); // Match CSS animation duration
+}
+
+// Collapsible Tasks Sections
+// function setupCollapsibleSections() {
+//   const activeTasksSection = document.getElementById("active-tasks");
+//   const completedTasksSection = document.getElementById("completed-tasks");
+
+//   if (activeTasksSection && completedTasksSection) {
+//     [activeTasksSection, completedTasksSection].forEach((section) => {
+//       const header = section.querySelector(".task-section-header");
+
+//       if (header) {
+//         header.addEventListener("click", () => {
+//           section.classList.toggle("collapsed");
+
+//           // Update the chevron icon rotation
+//           const icon = header.querySelector("i");
+//           if (icon) {
+//             icon.classList.toggle("fa-chevron-down");
+//             icon.classList.toggle("fa-chevron-up");
+//           }
+//         });
+//       }
+//     });
+//   }
+// }
+
+// Ensure collapsing behavior works correctly
+function setupTaskCollapsing() {
+  const taskSections = document.querySelectorAll(".task-section");
+
+  taskSections.forEach((section) => {
+    const header = section.querySelector(".task-header");
+
+    header.addEventListener("click", () => {
+      section.classList.toggle("collapsed");
+    });
+  });
 }
 
 // Display a welcome message
@@ -264,33 +382,6 @@ function updateWelcomeCard(tasks = []) {
   activeTasksElement.textContent = activeTasksCount;
   completedTasksElement.textContent = completedTasksCount;
 }
-
-// Setup Add Task section
-// function setupAddTaskSection() {
-//   const toggleButton = document.getElementById("toggle-add-task");
-//   const addTaskForm = document.getElementById("add-task-form");
-
-//   if (!toggleButton || !addTaskForm) {
-//     console.error("Required elements for Add Task section not found!");
-//     return;
-//   }
-
-//   toggleButton.addEventListener("click", () => {
-//     const isVisible = addTaskForm.classList.contains("visible");
-
-//     if (isVisible) {
-//       addTaskForm.classList.remove("visible");
-//       addTaskForm.classList.add("hidden");
-//       toggleButton.textContent = "+ Add New Task";
-//     } else {
-//       addTaskForm.classList.remove("hidden");
-//       addTaskForm.classList.add("visible");
-//       toggleButton.textContent = "Close Add Task";
-//     }
-//   });
-
-//   addTaskForm.addEventListener("submit", addTask);
-// }
 
 // Add Task Handler
 async function handleAddTask(event) {
@@ -346,31 +437,33 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sessionValid = initializeSession(); // This should check token validity
     if (!sessionValid) {
       console.warn("Session invalid. Redirecting to login.");
-      return; // Stop further execution if session is invalid
+      return;
     }
 
-    // Step 1.1: Attach logout listener
-    setupLogoutListener(); // Attach logout listener to the button
+    // Step 2: Setup Logout Button
+    setupLogoutListener();
 
-    // Step 2: Fetch and render tasks
+    // Step 3: Fetch and render tasks
     console.log("Fetching tasks...");
-    const tasks = await fetchTasks(); // Fetch and render tasks
-    updateWelcomeCard(tasks); // Update the welcome card stats
+    const tasks = await fetchTasks();
+    updateWelcomeCard(tasks);
 
-    // Step 3: Set up the "Add Task" section
+    // Step 4: Set up the "Add Task" section
     // console.log("Setting up Add Task section...");
     // setupAddTaskSection();
 
-    // Step 4: Initialize inactivity logout
+    // Step 5: Initialize inactivity logout
     console.log("Initializing inactivity logout...");
-    resetLogoutTimer(); // Reset the inactivity logout timer
-    initializeInactivityListener(); // Start inactivity logout timer
+    resetLogoutTimer();
+    initializeInactivityListener();
+
+    // Step 6: Setup collapsible task sections
+    // setupCollapsibleSections();
+    setupTaskCollapsing();
 
     console.log("Dashboard initialized successfully.");
   } catch (error) {
     console.error("Error initializing dashboard:", error.message);
-
-    // Ensure fallback behavior
     updateWelcomeCard([]); // Display a fallback welcome card
   }
 });

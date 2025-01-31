@@ -82,6 +82,9 @@ router.patch("/:id", protect, async (req, res) => {
     const { id } = req.params;
     const { completed } = req.body;
 
+    console.log(`PATCH request received for task ID: ${id}`);
+    console.log(`Completed value received:`, completed);
+
     const updatedTask = await Task.findByIdAndUpdate(
       id,
       { completed },
@@ -89,9 +92,11 @@ router.patch("/:id", protect, async (req, res) => {
     );
 
     if (!updatedTask) {
+      console.error(`Task not found for ID: ${id}`);
       return res.status(404).json({ error: "Task not found" });
     }
 
+    console.log("Task successfully updated:", updatedTask);
     res.json(updatedTask);
   } catch (error) {
     console.error("Error updating task:", error);
