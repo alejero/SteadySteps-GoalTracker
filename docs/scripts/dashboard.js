@@ -228,42 +228,75 @@ function highlightNewTask(taskElement) {
 
 // Toggle task completion
 async function toggleTaskCompletion(taskId) {
+  if (!taskId) {
+    console.error("Task ID is missing!");
+    return;
+  }
+
+  const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+  if (!taskElement) {
+    console.error(`Task element with ID ${taskId} not found!`);
+    return;
+  }
+
+  const checkbox = taskElement.querySelector(".task-complete");
+  const isCompleted = checkbox.checked;
+
   try {
-    const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
-
-    if (!taskElement) {
-      console.error("Task element not found in DOM");
-      return;
-    }
-
-    const isCompleted = taskElement.querySelector(".task-complete").checked;
-
-    console.log("Sending PATCH request with:", {
-      completed: isCompleted,
-    });
-
-    const response = await fetchWithAuth(`${API_BASE_URL}/tasks/${taskId}`, {
+    const response = await fetch(`${API_BASE_URL}/tasks/${taskId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" }, // ✅ Ensure proper headers
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
+      },
       body: JSON.stringify({ completed: isCompleted }),
     });
 
-    console.log("Raw response from server:", response);
-
-    const data = await response.json();
-    console.log("Task completion updated successfully:", data);
-
-    if (!data || !data._id) {
-      throw new Error("Failed to update task completion");
+    if (!response.ok) {
+      throw new Error("Failed to update task completion.");
     }
 
-    // Refresh the UI
+    const updatedTask = await response.json();
+    console.log("Task updated:", updatedTask);
+
+    // Move the task between Active and Completed sections
+    updateTaskUI(taskId, isCompleted);
+
+    // ✅ Fetch the latest tasks from the API to ensure accurate state
     const tasks = await fetchTasks();
-    renderTasks(tasks);
+    updateWelcomeCard(tasks); // Now we pass the correct tasks
   } catch (error) {
     console.error("Error toggling task completion:", error.message);
     alert("Failed to update task completion.");
   }
+}
+
+//
+function updateTaskUI(taskId, isCompleted) {
+  const taskElement = document.querySelector(`[data-task-id="${taskId}"]`);
+  if (!taskElement) return;
+
+  // Remove the task from the current section
+  taskElement.remove();
+
+  // Determine the new section
+  const targetContainer = isCompleted
+    ? document.getElementById("completed-tasks-list")
+    : document.getElementById("active-tasks-list");
+
+  if (targetContainer) {
+    targetContainer.appendChild(taskElement);
+  }
+
+  // Ensure UI reflects the correct completion status
+  const checkbox = taskElement.querySelector(".task-complete");
+  if (checkbox) {
+    checkbox.checked = isCompleted;
+  }
+
+  console.log(
+    `Task ${taskId} moved to ${isCompleted ? "Completed" : "Active"} section.`
+  );
 }
 
 // Move a task element in the DOM (For immediate UI updates without fetching the entire task list from the server)
